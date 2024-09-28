@@ -3,6 +3,7 @@ import './globals.css'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import WebSocketComponent from '@/components/WebSocketComponent'
 
 
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: {
                 <div className="px-2 py-5">
                     {children}
                 </div>
+                <WebSocketComponent />
                 <Footer />
             </body>
         </html>
