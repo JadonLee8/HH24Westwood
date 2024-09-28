@@ -2,7 +2,7 @@ import React from 'react'
 import './globals.css'
 
 import Footer from '@/components/Footer'
-import WebSocketComponent from '@/components/WebSocketComponent'
+import WebSocketComponent from '@/components/network/WebSocketComponent'
 
 
 
