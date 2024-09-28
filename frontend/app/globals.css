@@ -1,3 +1,19 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+
+@font-face {
+    font-family: 'Carnivalee Freakshow';
+    src: url('/fonts/CarnivaleeFreakshow.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'WesternBangBang';
+    src: url('/fonts/WesternBangBang-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+

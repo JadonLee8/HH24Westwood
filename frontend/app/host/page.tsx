@@ -1,7 +1,7 @@
 import React from 'react';
 import GamemodeCard from '@/components/GamemodeCard';
 import Link from 'next/link';
-import { useGameContext } from '@/components/GameContext';
+import { useGameContext } from '@/components/context/GameContext';
 
 export default function Host() {
 
