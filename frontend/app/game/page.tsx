@@ -1,11 +1,11 @@
 import React from 'react';
-import GameFrame from './GameFrame';
+import ConfigWindow from './ConfigWindow';
 
 export default function Game() {
     return (
         <>
             <div className="h-screen overflow-hidden">
-                <GameFrame />
+                <ConfigWindow />
             </div>
         </>
     );
