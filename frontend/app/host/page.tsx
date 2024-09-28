@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useGameContext } from '@/components/GameContext';
 
 export default function Host() {
-    const { currentLobby, host, gamemode, joinLobby, leaveLobby } = useGameContext();
 
     return (
         <>

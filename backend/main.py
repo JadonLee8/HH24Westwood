@@ -22,7 +22,7 @@ async def connect(sid, environ):
 
 @sio.event
 async def disconnect(sid):
-    print(f"Client disconnected: {sid}")  
+    print(f"Client disconnected: {sid}")
     l_manager.remove_user(sid)
 
 @sio.event
@@ -30,7 +30,7 @@ async def create_lobby(sid):
     lobby_code = None
     if l_manager.has_lobby(sid):
         lobby_code = l_manager.get_lobby(sid)
-    else: 
+    else:
         lobby_code = l_manager.create_lobby()
         join_lobby(sid, lobby_code)
     await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
@@ -41,6 +41,16 @@ async def join_lobby(sid, data):
     if l_manager.join_lobby(sid, lobby_code):
         sio.enter_room(sid, lobby_code)
         await sio.emit('lobby_joined', {'lobby_code': lobby_code}, room=lobby_code)
+    else:
+        await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
+
+@sio.event
+async def start_lobby(sid, data):
+    lobby_code = data['lobby_code']
+    print('Starting lobby')
+    if l_manager.start_lobby(lobby_code):
+        print('Lobby started')
+        await sio.emit('lobby_started', {'lobby_code': lobby_code}, room=lobby_code)
     else:
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
@@ -56,6 +66,24 @@ def join_lobby(sid, code):
 def leave_lobby(sid, code):
     l_manager.leave_lobby(sid, code)
     sio.leave_room(sid, code)
+
+@sio.event
+async def get_game_state(sid, data):
+    lobby_code = data['lobby_code']
+    if l_manager.has_lobby(lobby_code):
+        game_state = l_manager.get_lobby(lobby_code).game_state
+        await sio.emit('game_state', {'game_state': game_state}, room=sid)
+    else:
+        await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
+
+@sio.event
+async def next_game_state(sid, data):
+    lobby_code = data['lobby_code']
+    if l_manager.has_lobby(lobby_code):
+        l_manager.get_lobby(lobby_code).next_game_state()
+        await sio.emit('game_state', {'game_state': l_manager.get_lobby(lobby_code).game_state}, room=lobby_code)
+    else:
+        await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
 # Start the server
 if __name__ == '__main__':
