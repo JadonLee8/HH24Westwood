@@ -1,5 +1,6 @@
 import React from 'react';
 import GamemodeCard from '@/components/GamemodeCard';
+import Link from 'next/link';
 import { useGameContext } from '@/components/GameContext';
 
 export default function Host() {
@@ -7,7 +8,12 @@ export default function Host() {
 
     return (
         <>
-            <div className="h-screen overflow-hidden">
+            <div className="h-screen overflow-hidden relative">
+                <Link href="/">
+                    <button className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded">
+                        Back
+                    </button>
+                </Link>
                 <div className="page-container h-screen overflow-hidden flex justify-center items-center">
                     <div className="card-container flex flex-row flex-wrap-nowrap">
                         <div className="px-2">
@@ -21,7 +27,7 @@ export default function Host() {
                         </div> */}
                     </div>
                 </div>
-            </ div>
+            </div>
         </>
     );
 }
