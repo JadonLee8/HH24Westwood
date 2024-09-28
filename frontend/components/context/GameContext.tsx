@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 // Define the shape of the context state
 interface GameContextState {
-    currentLobbyCode: string | null;
+    lobbyCode: string | null;
     setLobbyCode: (lobbyCode: string) => void;
     host: boolean;
     setHost: (host: boolean) => void;
@@ -20,19 +20,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [host, setHost] = useState<boolean>(false);
     const [gamemode, setGamemode] = useState<number>(0);
 
-    const joinLobby = (lobby: string) => {
-        // Logic to join a lobby
-        setCurrentLobby(lobby);
-    };
-
-    const leaveLobby = () => {
-        // Logic to leave a lobby
-        setCurrentLobby(null);
-    };
-
     return (
         <GameContext.Provider value={{ 
-            currentLobbyCode: currentLobby,
+            lobbyCode: currentLobby,
             setLobbyCode: setCurrentLobby,
             host,
             setHost,

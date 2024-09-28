@@ -4,8 +4,7 @@ import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
 
 
-export default function(){
-    const { currentLobbyCode: currentLobby, host, gameState: gamemode, joinLobby, leaveLobby } = useGameContext();
+export default function Play() {    
     const [lobbyCode, setLobbyCode] = useState<string | null>(null);
     const [players, setPlayers] = useState<string[]>([]);
 
