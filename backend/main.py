@@ -18,22 +18,29 @@ l_manager = lobby_manager.LobbyManager()
 async def connect(sid, environ):
     print(f"Client connected: {sid}")
     print(l_manager.lobbies)
-    l_manager.create_user(sid)
 
 @sio.event
-async def disconnect(sid):
-    print(f"Client disconnected: {sid}")
-    l_manager.remove_user(sid)
-
-@sio.event
-async def create_lobby(sid):
-    lobby_code = None
-    if l_manager.has_lobby(sid):
-        lobby_code = l_manager.get_lobby(sid)
+async def connect_user(sid, username, code):
+    user = l_manager.create_user(username, sid)
+    print(f"User connected: {user.username}")
+    if code is not None:
+        await join_lobby(user, code)
     else:
-        lobby_code = l_manager.create_lobby()
-        await join_lobby(sid, lobby_code)
-    await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
+        await sio.emit('error', {'message': 'No lobby code provided'}, room=sid)
+
+@sio.event
+async def disconnect(sid, code, username):
+    print(f"Client disconnected: {sid}")
+    l_manager.remove_user(sid, code, username)
+
+@sio.event
+async def create_lobby(sid, username):
+    lobby_code = None
+    user = l_manager.create_user(username, sid)
+    # TODO: check if the user is already in a lobby
+    lobby_code = l_manager.create_lobby()
+    await join_lobby(user, lobby_code)
+    await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=user.sid)
 
 @sio.event
 async def join_lobby(sid, data):
