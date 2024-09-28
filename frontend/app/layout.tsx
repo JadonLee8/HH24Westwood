@@ -2,9 +2,6 @@ import React from 'react'
 import './globals.css'
 
 import Footer from '@/components/Footer'
-import WebSocketComponent from '@/components/network/WebSocketComponent'
-import { GameProvider } from '@/components/context/GameContext'
-
 
 export default function RootLayout({ children }: {
     children: React.ReactNode
