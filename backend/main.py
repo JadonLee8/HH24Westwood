@@ -1,82 +1,61 @@
 import asyncio
 import socketio
 from aiohttp import web
+from utils.utils import generate_lobby_code
+import lobby_manager
 
 # Create a Socket.IO server
 sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
-# In-memory storage for lobbies
-lobbies = {}
+# Connection: Add to user list
+# Disconnection: Disconnect from lobby (if in one) and remove from user list
 
-# Event when a client connects
+l_manager = lobby_manager.LobbyManager()
+
 @sio.event
 async def connect(sid, environ):
     print(f"Client connected: {sid}")
+    print(l_manager.lobbies)
+    l_manager.create_user(sid)
 
-# Event when a client sends a message
-@sio.event
-async def message(sid, data):
-    print(f"Message from {sid}: {data}")
-    await sio.send(f"Echo: {data}")
-
-# Event when a client disconnects
 @sio.event
 async def disconnect(sid):
-    print(f"Client disconnected: {sid}")
+    print(f"Client disconnected: {sid}")  
+    l_manager.remove_user(sid)
 
 @sio.event
-async def create_lobby(sid, data):
-    lobby_name = data['lobby_name']
-    if lobby_name not in lobbies:
-        lobbies[lobby_name] = []
-        await sio.emit('lobby_created', {'lobby_name': lobby_name}, room=sid)
-        print(f"Lobby '{lobby_name}' created by {sid}")
-    else:
-        await sio.emit('error', {'message': 'Lobby name already exists'}, room=sid)
+async def create_lobby(sid):
+    lobby_code = None
+    if l_manager.has_lobby(sid):
+        lobby_code = l_manager.get_lobby(sid)
+    else: 
+        lobby_code = l_manager.create_lobby()
+        join_lobby(sid, lobby_code)
+    await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
 
-# Join a lobby
 @sio.event
 async def join_lobby(sid, data):
-    lobby_name = data['lobby_name']
-    if lobby_name in lobbies:
-        lobbies[lobby_name].append(sid)
-        sio.enter_room(sid, lobby_name)  # Enter the Socket.IO room for the lobby
-        await sio.emit('joined_lobby', {'lobby_name': lobby_name}, room=sid)
-        await sio.emit('lobby_message', {'message': f'{sid} has joined the lobby'}, room=lobby_name)
-        print(f"Client {sid} joined lobby '{lobby_name}'")
+    lobby_code = data['lobby_code']
+    if l_manager.join_lobby(sid, lobby_code):
+        sio.enter_room(sid, lobby_code)
+        await sio.emit('lobby_joined', {'lobby_code': lobby_code}, room=lobby_code)
     else:
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
-# Leave a lobby
 @sio.event
-async def leave_lobby(sid, data):
-    lobby_name = data['lobby_name']
-    if lobby_name in lobbies and sid in lobbies[lobby_name]:
-        lobbies[lobby_name].remove(sid)
-        sio.leave_room(sid, lobby_name)  # Leave the Socket.IO room
-        await sio.emit('lobby_message', {'message': f'{sid} has left the lobby'}, room=lobby_name)
-        await sio.emit('left_lobby', {'lobby_name': lobby_name}, room=sid)
-        print(f"Client {sid} left lobby '{lobby_name}'")
-    else:
-        await sio.emit('error', {'message': 'Lobby not found or you are not in the lobby'}, room=sid)
+async def get_lobby_list(sid, data):
+    lobby_list = l_manager.get_lobby_list(data.lobby_code)
+    await sio.emit('lobby_list', {'players': lobby_list}, room=sid)
 
-# Send a message within a lobby
-@sio.event
-async def lobby_message(sid, data):
-    lobby_name = data['lobby_name']
-    message = data['message']
-    if lobby_name in lobbies and sid in lobbies[lobby_name]:
-        await sio.emit('lobby_message', {'message': f'{sid}: {message}'}, room=lobby_name)
-        print(f"Message from {sid} in lobby '{lobby_name}': {message}")
-    else:
-        await sio.emit('error', {'message': 'Lobby not found or you are not in the lobby'}, room=sid)
+def join_lobby(sid, code):
+    l_manager.join_lobby(sid, code)
+    sio.enter_room(sid, code)
 
-# Get list of lobbies
-@sio.event
-async def get_lobbies(sid):
-    await sio.emit('lobbies_list', {'lobbies': list(lobbies.keys())}, room=sid)
+def leave_lobby(sid, code):
+    l_manager.leave_lobby(sid, code)
+    sio.leave_room(sid, code)
 
 # Start the server
 if __name__ == '__main__':
