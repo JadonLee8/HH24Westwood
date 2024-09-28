@@ -2,9 +2,10 @@ import string
 from utils.utils import generate_lobby_code
 
 class User:
-    def __init__(self, username):
+    def __init__(self, username, sid):
         self.username = username
         self.lobbyCode = None
+        self.sid = sid
 
 class Lobby:
     def __init__(self, code):
@@ -21,81 +22,75 @@ class Lobby:
             return self.game_state
         return -1
 
+    def add_user(self, User):
+        self.users.append(User.sid)
+
+    def remove_user(self, User):
+        self.users.remove(User.sid)
+
 class LobbyManager:
-    users = {}
-    lobbies = {}
-    max_state = 6
+    def __init__(self):
+        self.lobbies = {}
+        self.max_state = 6
 
     # Create new user
-    def create_user(self, sid):
-        self.users[sid] = User(sid)
+    def create_user(self, sid, username, code):
+        self.lobbies[code].add_user(User(username, sid))
 
     # Delete user and remove from lobby if in one
-    def remove_user(self, sid):
-        print("REMOVE USER", sid)
-        if self.users[sid].lobbyCode:
-            self.remove_lobby_list(sid, self.users[sid].lobbyCode)
-            print("REMOVED FROM LOBBY", self.users[sid].lobbyCode)
-        del self.users[sid]
+    def remove_user(self, code, user): # TODO: change to take username or sid as param for all functions
+        print("REMOVE USER", user.username, "WITH SID", user.sid)
+        if code in self.lobbies and len(self.lobbies[code].users) > 0:
+            if self.lobbies[code].users.contains(user):
+                self.lobbies[code].remove_user(user)
+                print("REMOVED FROM LOBBY", user.username)
+        else:
+            print("Invalid lobby or user")
 
-    def remove_lobby_list(self, sid, code):
-        if code in self.lobbies:
-            self.lobbies[code].remove(sid)
-            self.users[sid].lobbyCode = None
-        if len(self.lobbies[code]) == 0:
-            print("REMOVING LOBBY", code)
-            del self.lobbies[code]
-
-    # Generate random unique lobby code
+    # Generate random unique lobby code and lobby object and add to lobbies
     def create_lobby(self) -> string:
         lobby_code = generate_lobby_code()
         while lobby_code in self.lobbies:
             lobby_code = generate_lobby_code()
 
         # Create empty lobby
-        self.lobbies[lobby_code] = []
+        self.lobbies[lobby_code] = Lobby(lobby_code)
         return lobby_code
-
-    def has_lobby(self, sid):
-        return self.users[sid].lobbyCode != None
-
-    def get_lobby(self, sid):
-        return self.users[sid].lobbyCode
 
     # Clear all users from lobby
     def clear_lobby(self, code):
         if code in self.lobbies:
-            self.lobbies[code] = []
+            self.lobbies[code].users = []
 
-    def join_lobby(self, sid, code):
-        if code in self.lobbies and sid not in self.lobbies[code]:
-            self.lobbies[code].append(sid)
-            self.users[sid].lobbyCode = code
+    def join_lobby(self, user, code):
+        if code in self.lobbies and user not in self.lobbies[code].users:
+            self.lobbies[code].add_user(user)
+            user.lobbyCode = code
             return True
         return False
 
-    def start_lobby(self, code): # TODO: check if this exact lobby has
+    def start_lobby(self, code):
         if code in self.lobbies:
             self.lobbies[code].game_state = 1
             return True
         return False
 
-    def get_lobby_list(self, code):
-        return self.lobbies[code]
+    def get_users_in_lobby(self, code):
+        return self.lobbies[code].users
 
-    def leave_lobby(self, sid, code):
-        print("LEAVE LOBBY", sid, code)
+    def leave_lobby(self, user, code):
+        print("LEAVE LOBBY", user.username, code)
         if code in self.lobbies:
-            self.lobbies[code].remove(sid)
-            self.users[sid].lobbyCode = None
+            self.lobbies[code].remove_user(user)
+            user.lobbyCode = None
             return True
         return False
 
-    def get_game_state(self):
-        return self.game_state
+    def get_game_state(self, lobby_code):
+        return self.lobbies[lobby_code].game_state
 
-    def next_game_state(self):
-        if self.game_state < self.max_state:
-            self.game_state += 1
-            return self.game_state
+    def next_game_state(self, lobby_code):
+        if self.lobbies[lobby_code].game_state < self.max_state:
+            self.lobbies[lobby_code].game_state += 1
+            return self.lobbies[lobby_code].game_state
         return -1
