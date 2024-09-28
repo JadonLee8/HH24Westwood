@@ -3,7 +3,7 @@ import { useGameContext } from '@/components/GameContext';
 import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
 
-export default function GameFrame() {
+export default function ConfigWindow() {
     const { currentLobby, host, gamemode, joinLobby, leaveLobby } = useGameContext();
     const [lobbyCode, setLobbyCode] = useState<string | null>(null);
     const [players, setPlayers] = useState<string[]>([]);
