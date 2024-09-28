@@ -1,14 +1,14 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import WebSocketComponent from './network/WebSocketComponent';
 
 // Define the shape of the context state
 interface GameContextState {
-    currentLobby: string | null;
+    currentLobbyCode: string | null;
+    setLobbyCode: (lobbyCode: string) => void;
     host: boolean;
-    gamemode: number;
-    joinLobby: (lobby: string) => void;
-    leaveLobby: () => void;
+    setHost: (host: boolean) => void;
+    gameState: number;
+    setGameState: (gameState: number) => void;
 }
 
 // Create the context with a default value
@@ -31,7 +31,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <GameContext.Provider value={{ currentLobby, host, gamemode, joinLobby, leaveLobby }}>
+        <GameContext.Provider value={{ 
+            currentLobbyCode: currentLobby,
+            setLobbyCode: setCurrentLobby,
+            host,
+            setHost,
+            gameState: gamemode,
+            setGameState: setGamemode
+        }}>
             {children}
         </GameContext.Provider>
     );

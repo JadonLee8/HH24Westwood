@@ -1,19 +1,13 @@
 'use client'
-import { useGameContext } from '@/components/GameContext';
+import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
 
 export default function ConfigWindow() {
-    const { currentLobby, host, gamemode, joinLobby, leaveLobby } = useGameContext();
-    const [lobbyCode, setLobbyCode] = useState<string | null>(null);
+    const { currentLobbyCode, setLobbyCode, host, setHost, gameState, setGameState } = useGameContext();    
     const [players, setPlayers] = useState<string[]>([]);
-    const [gameState, setGameState] = useState<string>('');
 
     useEffect(() => {
-        const leaveLobby = () => {
-            Socket.emit('leave_lobby');
-        }
-
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             setLobbyCode(data.lobby_code);
@@ -43,38 +37,35 @@ export default function ConfigWindow() {
         Socket.emit('create_lobby');
 
         return () => {
-            leaveLobby();
+            Socket.off('lobby_created');
+            Socket.off('lobby_joined');
+            Socket.off('lobby_players');
+            Socket.off('lobby_started');
+            Socket.off('next_game_state');
+
+            Socket.emit('leave_lobby');
         }
     }, [])
 
 
     return (
         <>
-            <div className="h-screen overflow-hidden">
-                <div className="page-container h-screen overflow-hidden flex justify-center items-center">
-                    <div className="card-container flex flex-row flex-wrap-nowrap">
-                        <div className="px-2">
-                            <h1>Game Frame</h1>
-                            <p>Current Lobby: {currentLobby ?? "None"}</p>
-                            <p>Host: {host ? 'Yes' : 'No'}</p>
-                            <p>Game Mode: {gamemode}</p>
-                            <p>Lobby Code: {lobbyCode}</p>
-                            <p>Players: </p>
-                            <ul>
-                                {players.length > 0 ? players.map((player, i) => <li key={i}>{player}</li>) : <li>No players</li>}
-                            </ul>
-                            <p>Players: {players.join(', ')}</p>
-                            <p>Game State: {gameState}</p>
-                            <button onClick={() => Socket.emit('start_lobby', { 'lobby_code': lobbyCode })} className="border border-black rounded px-4 py-2 m-2">
-                                Start Game
-                            </button>
-                            <button onClick={() => Socket.emit('next_game_state', { 'lobby_code': lobbyCode })} className="border border-black rounded px-4 py-2 m-2">
-                                Next Game State
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div className="p-5 m-4 bg-slate-600 inline-block rounded-md">
+                <p>Hosted Lobby: {currentLobbyCode ?? "None"}</p>
+                <p>Host: {host ? 'Yes' : 'No'}</p>
+                <p>Game State: {gameState}</p>
+                <p>Players: </p>
+                <ul>
+                    {players.length > 0 ? players.map((player, i) => <li key={i}>{player}</li>) : <li>No players</li>}
+                </ul>
+                <p>Game State: {gameState}</p>
+                <button onClick={() => Socket.emit('start_lobby', { 'lobby_code': currentLobbyCode })} className="border border-black rounded px-4 py-2 m-2">
+                    Start Game
+                </button>
+                <button onClick={() => Socket.emit('next_game_state', { 'lobby_code': currentLobbyCode })} className="border border-black rounded px-4 py-2 m-2">
+                    Next Game State
+                </button>
             </div>
         </>
-    )
+    );
 }

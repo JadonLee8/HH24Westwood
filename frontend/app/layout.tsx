@@ -3,7 +3,7 @@ import './globals.css'
 
 import Footer from '@/components/Footer'
 import WebSocketComponent from '@/components/network/WebSocketComponent'
-import { GameProvider } from '@/components/GameContext'
+import { GameProvider } from '@/components/context/GameContext'
 
 
 export default function RootLayout({ children }: {
@@ -13,11 +13,9 @@ export default function RootLayout({ children }: {
         <html lang="en">
             <head />
             <body className="flex flex-col min-h-screen relative overflow-hidden">
-                <GameProvider>
-                    <div className="">
-                        {children}
-                    </div>
-                </GameProvider>
+                <div className="">
+                    {children}
+                </div>
                 <Footer />
             </body>
         </html>
