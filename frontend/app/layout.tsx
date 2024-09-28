@@ -1,7 +1,6 @@
 import React from 'react'
 import './globals.css'
 
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import WebSocketComponent from '@/components/network/WebSocketComponent'
 
@@ -13,9 +12,8 @@ export default function RootLayout({ children }: {
     return (
         <html lang="en">
             <head />
-            <body className="flex flex-col min-h-screen relative">
-                <Header />
-                <div className="px-2 py-5">
+            <body className="flex flex-col min-h-screen relative overflow-hidden">
+                <div className="">
                     {children}
                 </div>
                 <WebSocketComponent />
