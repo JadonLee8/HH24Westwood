@@ -4,7 +4,7 @@ import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
 
 export default function ConfigWindow() {
-    const { lobbyCode: currentLobbyCode, setLobbyCode, host, setHost, gameState, setGameState } = useGameContext();    
+    const { lobbyCode: currentLobbyCode, setLobbyCode, host, setHost, gameState, setGameState } = useGameContext();
     const [players, setPlayers] = useState<string[]>([]);
 
     useEffect(() => {
