@@ -32,30 +32,32 @@ async def create_lobby(sid):
         lobby_code = l_manager.get_lobby(sid)
     else: 
         lobby_code = l_manager.create_lobby()
-        join_lobby(sid, lobby_code)
+        await join_lobby(sid, lobby_code)
     await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
 
 @sio.event
 async def join_lobby(sid, data):
     lobby_code = data['lobby_code']
+    print(lobby_code)
     if l_manager.join_lobby(sid, lobby_code):
-        sio.enter_room(sid, lobby_code)
+        await sio.enter_room(sid, lobby_code)
         await sio.emit('lobby_joined', {'lobby_code': lobby_code}, room=lobby_code)
     else:
-        await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
+        await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
 
 @sio.event
-async def get_lobby_list(sid, data):
-    lobby_list = l_manager.get_lobby_list(data.lobby_code)
-    await sio.emit('lobby_list', {'players': lobby_list}, room=sid)
+async def lobby_players(sid, data):
+    lobby_list = l_manager.get_lobby_list(data['lobby_code'])
+    print("Lobby players requested: ", lobby_list)
+    await sio.emit('lobby_players', {'players': lobby_list}, room=sid)
 
-def join_lobby(sid, code):
+async def join_lobby(sid, code):
     l_manager.join_lobby(sid, code)
-    sio.enter_room(sid, code)
+    await sio.enter_room(sid, code)
 
-def leave_lobby(sid, code):
+async def leave_lobby(sid, code):
     l_manager.leave_lobby(sid, code)
-    sio.leave_room(sid, code)
+    await sio.leave_room(sid, code)
 
 # Start the server
 if __name__ == '__main__':
