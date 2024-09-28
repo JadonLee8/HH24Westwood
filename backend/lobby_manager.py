@@ -6,6 +6,7 @@ class User:
         self.username = username
         self.lobbyCode = None
         self.sid = sid
+        self.role = None
 
 class Lobby:
     def __init__(self, code):
@@ -28,17 +29,25 @@ class Lobby:
     def remove_user(self, User):
         self.users.remove(User.sid)
 
+# TODO: replace username with sid for the identifier. Consider rest of code tho. Might be easier to just prevent duplicate usernames
+# TODO: prevent duplicate usernames
+
 class LobbyManager:
     def __init__(self):
-        self.lobbies = {}
+        self.lobbies = {} # maps lobby code to lobby object
+        self.users = {} # maps username to user object
         self.max_state = 6
 
     # Create new user
     def create_user(self, sid, username, code):
         self.lobbies[code].add_user(User(username, sid))
 
+    def create_user(self, username, sid):
+        return User(username, sid)
+
     # Delete user and remove from lobby if in one
-    def remove_user(self, code, user): # TODO: change to take username or sid as param for all functions
+    def remove_user(self, code, username):
+        user = self.users[username]
         print("REMOVE USER", user.username, "WITH SID", user.sid)
         if code in self.lobbies and len(self.lobbies[code].users) > 0:
             if self.lobbies[code].users.contains(user):
@@ -62,7 +71,8 @@ class LobbyManager:
         if code in self.lobbies:
             self.lobbies[code].users = []
 
-    def join_lobby(self, user, code):
+    def join_lobby(self, username, code):
+        user = self.users[username]
         if code in self.lobbies and user not in self.lobbies[code].users:
             self.lobbies[code].add_user(user)
             user.lobbyCode = code
