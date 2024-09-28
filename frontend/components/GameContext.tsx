@@ -33,7 +33,6 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return (
         <GameContext.Provider value={{ currentLobby, host, gamemode, joinLobby, leaveLobby }}>
             {children}
-            <WebSocketComponent />
         </GameContext.Provider>
     );
 };

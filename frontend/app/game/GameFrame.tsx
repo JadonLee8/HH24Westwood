@@ -10,14 +10,24 @@ export default function GameFrame() {
     const [gameState, setGameState] = useState<string>('');
 
     useEffect(() => {
+        const leaveLobby = () => {
+            Socket.emit('leave_lobby');
+        }
+
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             setLobbyCode(data.lobby_code);
 
             Socket.on('lobby_joined', (data) => {
-                setPlayers(data.players);
                 console.log('Lobby joined:', data);
+                Socket.emit('lobby_players', { lobby_code: data.lobby_code });
             });
+
+            Socket.on('lobby_players', (data) => {
+                console.log('Lobby players:', data.players);
+                const playerList = data.players;
+                setPlayers(playerList);
+            })
         });
 
         Socket.on('lobby_started', (data) => {
@@ -33,7 +43,7 @@ export default function GameFrame() {
         Socket.emit('create_lobby');
 
         return () => {
-
+            leaveLobby();
         }
     }, [])
 
@@ -49,6 +59,10 @@ export default function GameFrame() {
                             <p>Host: {host ? 'Yes' : 'No'}</p>
                             <p>Game Mode: {gamemode}</p>
                             <p>Lobby Code: {lobbyCode}</p>
+                            <p>Players: </p>
+                            <ul>
+                                {players.length > 0 ? players.map((player, i) => <li key={i}>{player}</li>) : <li>No players</li>}
+                            </ul>
                             <p>Players: {players.join(', ')}</p>
                             <p>Game State: {gameState}</p>
                             <button onClick={() => Socket.emit('start_lobby', { 'lobby_code': lobbyCode })} className="border border-black rounded px-4 py-2 m-2">

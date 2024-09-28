@@ -32,8 +32,10 @@ class LobbyManager:
 
     # Delete user and remove from lobby if in one
     def remove_user(self, sid):
+        print("REMOVE USER", sid)
         if self.users[sid].lobbyCode:
             self.remove_lobby_list(sid, self.users[sid].lobbyCode)
+            print("REMOVED FROM LOBBY", self.users[sid].lobbyCode)
         del self.users[sid]
 
     def remove_lobby_list(self, sid, code):
@@ -41,6 +43,7 @@ class LobbyManager:
             self.lobbies[code].remove(sid)
             self.users[sid].lobbyCode = None
         if len(self.lobbies[code]) == 0:
+            print("REMOVING LOBBY", code)
             del self.lobbies[code]
 
     # Generate random unique lobby code
@@ -65,7 +68,7 @@ class LobbyManager:
             self.lobbies[code] = []
 
     def join_lobby(self, sid, code):
-        if code in self.lobbies:
+        if code in self.lobbies and sid not in self.lobbies[code]:
             self.lobbies[code].append(sid)
             self.users[sid].lobbyCode = code
             return True
@@ -81,6 +84,7 @@ class LobbyManager:
         return self.lobbies[code]
 
     def leave_lobby(self, sid, code):
+        print("LEAVE LOBBY", sid, code)
         if code in self.lobbies:
             self.lobbies[code].remove(sid)
             self.users[sid].lobbyCode = None
