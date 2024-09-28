@@ -4,11 +4,12 @@ interface GamemodeCardProps {
     imageSrc: string;
     title: string;
     description: string;
+    link: string;
 }
 
-const GamemodeCard: React.FC<GamemodeCardProps> = ({ imageSrc, title, description }) => {
+const GamemodeCard: React.FC<GamemodeCardProps> = ({ imageSrc, title, description, link }) => {
     return (
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
+        <a className="max-w-sm rounded overflow-hidden shadow-lg" href={link}>
             <img className="w-full rounded-t" src={imageSrc} alt={title} />
             <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2 text-center">{title}</div>
@@ -16,7 +17,7 @@ const GamemodeCard: React.FC<GamemodeCardProps> = ({ imageSrc, title, descriptio
                     {description}
                 </p>
             </div>
-        </div>
+        </a>
     );
 };
 
