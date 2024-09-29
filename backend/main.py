@@ -56,8 +56,10 @@ async def start_lobby(sid, data):
     print('Starting lobby')
     if l_manager.start_lobby(lobby_code):
         print('Lobby started')
-        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code), 'users_to_roles': l_manager.get_usernames_to_roles(lobby_code)}, room=lobby_code)
-    else:
+        users_to_roles = l_manager.get_usernames_to_roles(lobby_code)
+        for user, role in users_to_roles.items():
+            print(f"User: {user}, Role: {role}")
+        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code), 'users_to_roles': users_to_roles}, room=lobby_code)
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
 @sio.event

@@ -13,13 +13,7 @@ export default function WaitingRoom() {
             console.log('Lobby players:', data.players);
             const playerList = data.players;
             setPlayers(playerList);
-            Socket.on('lobby_started', (data) => {
-                const users_to_roles = data.users_to_roles;
-                const role = users_to_roles[game.username];
-                console.log('User name: ', game.username);
-                console.log('User role:', role);
-                game.setRole(role);
-            });
+
         });
         return () => {
             Socket.off('lobby_players');
