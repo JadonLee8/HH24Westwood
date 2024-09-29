@@ -10,11 +10,11 @@ class User:
         self.sid = sid
         self.role = None # TODO: randomly assign roles after game starts. When game starts
 
+
 class Role(Enum):
     OUTLAW = "outlaw"
     SHERIFF = "sheriff"
     CITIZEN = "citizen"
-
 class Lobby:
     def __init__(self, code):
         self.code = code
@@ -23,21 +23,22 @@ class Lobby:
 
     def start_lobby(self):
         self.game_state = 1
-        user_set = set(self.users)
 
-        # Choose a random user and set their role to CRIMINAL
-        random_user = random.choice(list(user_set))
-        random_user.role = Role.CRIMINAL
-        user_set.remove(random_user)
+        random.shuffle(self.users)
 
-        # Choose a random user and set their role to SHERIFF
-        random_user = random.choice(list(user_set))
-        random_user.role = Role.SHERIFF
-        user_set.remove(random_user)
+        # Assign the first user as OUTLAW
+        self.users[0].role = Role.OUTLAW
 
-        # Set the rest of the users to CITIZEN
-        for user in user_set:
+        # Assign the second user as SHERIFF
+        self.users[1].role = Role.SHERIFF
+
+        # Assign the rest of the users as CITIZEN
+        for user in self.users[2:]:
             user.role = Role.CITIZEN
+
+        # Print the users and their assigned roles
+        for user in self.users:
+            print(user.username, user.role)
 
     def next_game_state(self):
         if self.game_state < 6:
@@ -46,10 +47,10 @@ class Lobby:
         return -1
 
     def add_user(self, User):
-        self.users.append(User.sid)
+        self.users.append(User)
 
     def remove_user(self, User):
-        self.users.remove(User.sid)
+        self.users.remove(User)
 
 # TODO: replace username with sid for the identifier. Consider rest of code tho. Might be easier to just prevent duplicate usernames
 # TODO: prevent duplicate usernames
@@ -58,7 +59,7 @@ class LobbyManager:
     def __init__(self):
         self.lobbies = {} # maps lobby code to lobby object
         self.users = {} # maps username to user object
-        self.max_state = 6
+        self.max_state = 8
 
     # Create new user
     def create_user(self, sid, username, code=None):
@@ -111,20 +112,19 @@ class LobbyManager:
         return False
 
     def start_lobby(self, code):
-        print(code)
-        print(self.lobbies)
         if code in self.lobbies:
             self.lobbies[code].game_state = 1
+            self.lobbies[code].start_lobby()
             return True
         return False
 
-    def get_users_in_lobby(self, code):
-        return self.lobbies[code].users
+    def get_sids_in_lobby(self, code):
+        return [u.sid for u in self.lobbies[code].users]
 
     def get_usernames_in_lobby(self, code):
         if code in self.lobbies:
             users = self.lobbies[code].users
-            return [self.find_user_by_sid(user) for user in users]
+            return [user.username for user in users]
         else:
             return []
 
@@ -142,6 +142,7 @@ class LobbyManager:
     def next_game_state(self, lobby_code):
         if self.lobbies[lobby_code].game_state < self.max_state:
             self.lobbies[lobby_code].game_state += 1
+            print(self.lobbies[lobby_code].game_state)
             return self.lobbies[lobby_code].game_state
         return -1
 

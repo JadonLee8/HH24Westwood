@@ -48,7 +48,7 @@ export default function WaitingRoom() {
                     <button
                         onClick={() => {
                             if (game.host) {
-                                Socket.emit('next_game_state', { 'lobby_code': game.lobbyCode });
+                                Socket.emit('start_lobby', { 'lobby_code': game.lobbyCode });
                             }
                         }}
                         className="px-6 py-3 bg-blue-500 text-white text-2xl rounded"

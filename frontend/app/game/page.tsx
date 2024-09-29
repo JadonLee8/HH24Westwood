@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { use, useEffect } from 'react';
 import ConfigWindow from './ConfigWindow';
 import { GameProvider, useGameContext } from '@/components/context/GameContext';
 import LobbyCode from './components/LobbyCode';
@@ -14,8 +14,12 @@ import ThirdFrame from './components/frames/ThirdFrame';
 export default function Game() {
     const game = useGameContext();
 
-    Socket.on('next_game_state', (data) => {
-        game.setGameState(data.game_state);
+
+    useEffect(() => {
+        Socket.on('next_game_state', (data) => {
+            game.setGameState(data.game_state);
+            console.log('Next game state:', data.game_state);
+        });
     });
 
     const renderComponent = () => {
