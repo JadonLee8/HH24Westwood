@@ -64,6 +64,21 @@ async def lobby_players(sid, data):
     print("Lobby players requested: ", lobby_list)
     await sio.emit('lobby_players', {'players': lobby_list}, room=sid)
 
+@sio.event
+async def canvas_data(sid, data):
+    lobby_code = data['lobby_code']
+    next_state = l_manager.lobbies[lobby_code].add_image(sid, data['canvas_data'])
+    if next_state:
+        await next_game_state(sid, {'lobby_code': lobby_code})
+
+@sio.event
+async def lobby_canvas_data(sid, data):
+    lobby_code = data['lobby_code']
+    image_dict = l_manager.lobbies[lobby_code].images
+    users = [l_manager.find_user_by_sid(k) for k in image_dict.keys()]
+    images = [image_dict[key] for key in image_dict]
+    await sio.emit('lobby_canvas_data', {'users': users, 'images': images}, room=lobby_code)
+
 async def join_lobby(sid, username, code):
     l_manager.join_lobby(username, code)
     await sio.enter_room(sid, code)
