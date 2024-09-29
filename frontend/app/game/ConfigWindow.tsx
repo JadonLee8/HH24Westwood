@@ -50,7 +50,7 @@ export default function ConfigWindow() {
 
     return (
         <>
-            <div className="p-5 m-4 bg-slate-600 inline-block rounded-md">
+            <div className="p-5 m-4 bg-slate-600 absolute rounded-md">
                 <p>Hosted Lobby: {currentLobbyCode ?? "None"}</p>
                 <p>Host: {host ? 'Yes' : 'No'}</p>
                 <p>Game State: {gameState}</p>
