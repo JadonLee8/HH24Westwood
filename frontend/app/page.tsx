@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import ForegroundStatic from "@/components/ForegroundStatic";
 
 export default function Home() {
-    const [isMouseLeft, setIsMouseLeft] = useState(false); // Track mouse movement
     const [isJoinClicked, setIsJoinClicked] = useState(false); // Track whether "Join Game" was clicked
     const [nickname, setNickname] = useState(""); // State to store nickname
     const [gameCode, setGameCode] = useState(""); // State to store game code
+    const [resetWedges, setResetWedges] = useState(false); // Reset wedges after retracting
 
     // Function to play hover sound
     const playSound = () => {
@@ -29,24 +29,10 @@ export default function Home() {
         };
     }, []);
 
-    // Function to handle mouse movement, disabled after "Join Game" is clicked
-    const handleMouseMove = (e) => {
-        if (!isJoinClicked) {
-            const screenWidth = window.innerWidth;
-            const mouseX = e.clientX;
-
-            // If the mouse moves to the left 1/3 of the screen, show elements; else hide them
-            if (mouseX < screenWidth / 3) {
-                setIsMouseLeft(true);
-            } else if (mouseX > (2 * screenWidth) / 3) {
-                setIsMouseLeft(false);
-            }
-        }
-    };
-
     // Handle "Join Game" button click
     const handleJoinClick = () => {
         setIsJoinClicked(true); // Move the original wedge out and bring the new wedge in
+        setResetWedges(false);  // Wedges retract but stay retracted until reset
     };
 
     // Handle "Play" button click
@@ -58,35 +44,29 @@ export default function Home() {
     // Handle background click to reset
     const handleBackgroundClick = () => {
         if (isJoinClicked) {
-            setIsJoinClicked(false); // Reset the join state
-            setIsMouseLeft(false); // Reset the mouse tracking for the left wedge
+            setIsJoinClicked(false); // Retract the right-side wedge
+            setResetWedges(true); // Reset original wedge and border
         }
     };
 
-    // Attach mousemove event listener on component mount and clean it up on unmount
-    useEffect(() => {
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, [isJoinClicked]);
-
     return (
         <div className="relative min-h-screen overflow-hidden" onClick={handleBackgroundClick}>
-            {/* Background image that is always visible */}
+            {/* Background video that is always visible */}
             <video
-            className="absolute inset-0 w-full h-full object-cover "
-            src="bg.mp4"
-            autoPlay
-            loop
-            muted
-        ></video>
+                className="absolute inset-0 w-full h-full object-cover"
+                src="bg.mp4"
+                autoPlay
+                loop
+                muted
+            ></video>
 
             <ForegroundStatic /> {/* Add the static effect here */}
 
             {/* Original Wedge with Pattern */}
             <div
-                className={`absolute w-1/3 h-full transform transition-transform duration-1000 ${isJoinClicked ? '-translate-x-full' : (isMouseLeft ? 'translate-x-0' : '-translate-x-full')}`} 
+                className={`absolute w-1/3 h-full transform transition-transform duration-1000 ${
+                    isJoinClicked ? '-translate-x-full' : resetWedges ? 'translate-x-0' : ''
+                }`} // Retract when Join is clicked, return after reset
                 style={{
                     clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0 100%)',
                     backgroundImage: 'url(/pattern.jpg)',
@@ -97,7 +77,9 @@ export default function Home() {
 
             {/* Parallelogram-Shaped Black Border for the Original Wedge */}
             <div
-                className={`absolute w-1/3 h-full transform transition-transform duration-1000 ${isJoinClicked ? '-translate-x-full' : (isMouseLeft ? 'translate-x-0' : '-translate-x-full')}`}
+                className={`absolute w-1/3 h-full transform transition-transform duration-1000 ${
+                    isJoinClicked ? '-translate-x-full' : resetWedges ? 'translate-x-0' : ''
+                }`} // Retract when Join is clicked, return after reset
                 style={{
                     clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)',
                     backgroundColor: 'black',
@@ -107,7 +89,9 @@ export default function Home() {
 
             {/* New Upside-Down Flipped Wedge */}
             <div
-                className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-33.33vw]' : ''}`} 
+                className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${
+                    isJoinClicked ? 'translate-x-[-33.33vw]' : ''
+                }`}
                 style={{
                     clipPath: 'polygon(100% 100%, 0 100%, 40% 0, 100% 0)',
                     backgroundImage: 'url(/pattern.jpg)',
@@ -115,12 +99,19 @@ export default function Home() {
                     backgroundPosition: 'center',
                 }}
             >
+                {/* "Join Game" Text */}
+                <div className="flex justify-center mt-[220px] ml-[100px]">
+                    <h1 className="text-white text-5xl mb-8 text-outline-thick" style={{ fontFamily: 'WesternBangBang' }}>
+                        Join Game
+                    </h1>
+                </div>
+
                 {/* Input fields and Play button */}
-                <div className="flex flex-col items-center justify-center h-full space-y-6 p-6" onClick={(e) => e.stopPropagation()}>
+                <div className="flex flex-col items-center justify-center space-y-6 mt-[40px] ml-[100px]" onClick={(e) => e.stopPropagation()}>
                     <input
                         type="text"
                         placeholder="Enter Nickname"
-                        className="p-2 rounded-md text-black w-1/2 ml-20 mt-20"
+                        className="p-2 rounded-md text-black w-1/2"
                         value={nickname}
                         maxLength={15} // Max 15 characters for nickname
                         onChange={(e) => setNickname(e.target.value)}
@@ -128,7 +119,7 @@ export default function Home() {
                     <input
                         type="text"
                         placeholder="Enter Game Code"
-                        className="p-2 rounded-md text-black w-1/2 ml-20"
+                        className="p-2 rounded-md text-black w-1/2"
                         value={gameCode}
                         maxLength={6} // Max 6 characters for game code
                         onChange={(e) => setGameCode(e.target.value)}
@@ -136,7 +127,7 @@ export default function Home() {
                     <img
                         src="/playbutton.png"
                         alt="Play Button"
-                        className="w-[25%] ml-20 cursor-pointer hover:opacity-90 active:opacity-60 hover:scale-105 transition duration-200 transform"
+                        className="w-[25%] cursor-pointer hover:opacity-90 active:opacity-60 hover:scale-105 transition duration-200 transform"
                         onClick={handlePlayClick}
                         onMouseEnter={playSound}
                     />
@@ -145,7 +136,9 @@ export default function Home() {
 
             {/* Separate Parallelogram-Shaped Black Border for the Upside-Down Wedge */}
             <div
-                className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-53.33vw]' : ''}`}
+                className={`absolute w-1/3 h-full left-[80vw] transform transition-transform duration-1000 ${
+                    isJoinClicked ? 'translate-x-[-33.33vw]' : ''
+                }`}
                 style={{
                     clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)',
                     backgroundColor: 'black',
@@ -155,7 +148,9 @@ export default function Home() {
 
             {/* Logo with Pulse Animation */}
             <div
-                className={`absolute top-4 left-4 z-10 transform transition-transform duration-1000 ${isJoinClicked ? '-translate-x-[200%]' : (isMouseLeft ? 'translate-x-0' : '-translate-x-[200%]')}`}
+                className={`absolute top-4 left-4 z-10 transform transition-transform duration-1000 ${
+                    isJoinClicked ? '-translate-x-[200%]' : resetWedges ? 'translate-x-0' : ''
+                }`} // Retract with the original wedge
             >
                 <img
                     src="newlogo.png"
@@ -166,11 +161,13 @@ export default function Home() {
 
             {/* Buttons (Pushed further off-screen, adjusted positioning) */}
             <div
-                className={`absolute top-96 left-10 flex flex-col space-y-8 z-10 transform transition-transform duration-1000 ${isJoinClicked ? '-translate-x-[200%]' : (isMouseLeft ? 'translate-x-0' : '-translate-x-[200%]')}`}
+                className={`absolute top-[70%] left-10 flex flex-col space-y-8 z-10 transform transition-transform duration-1000 ${
+                    isJoinClicked ? '-translate-x-[200%]' : resetWedges ? 'translate-x-0' : ''
+                }`} // Retract with the original wedge
             >
                 <a
                     href="#"
-                    className="text-white text-4xl font-normal transition duration-100 ease-in-out hover:text-gray-300 hover:scale-105"
+                    className="text-white text-4xl font-normal transition duration-100 ease-in-out hover:text-gray-300 hover:scale-105 text-outline-thick"
                     style={{ fontFamily: 'WesternBangBang' }}
                     onMouseEnter={playSound}
                     onClick={handleJoinClick}
@@ -179,7 +176,7 @@ export default function Home() {
                 </a>
                 <a
                     href="#"
-                    className="text-white text-4xl font-normal transition duration-100 ease-in-out hover:text-gray-300 hover:scale-105"
+                    className="text-white text-4xl font-normal transition duration-100 ease-in-out hover:text-gray-300 hover:scale-105 text-outline-thick"
                     style={{ fontFamily: 'WesternBangBang' }}
                     onMouseEnter={playSound}
                 >
@@ -202,6 +199,19 @@ export default function Home() {
                 }
                 .animate-pulse-custom {
                     animation: pulse-custom 2s infinite;
+                }
+
+                /* Thicker black outline effect */
+                .text-outline-thick {
+                    text-shadow: 
+                        -2px -2px 0 #000, 
+                        2px -2px 0 #000, 
+                        -2px 2px 0 #000, 
+                        2px 2px 0 #000,
+                        -3px -3px 0 #000, 
+                        3px -3px 0 #000, 
+                        -3px 3px 0 #000, 
+                        3px 3px 0 #000;
                 }
             `}</style>
         </div>
