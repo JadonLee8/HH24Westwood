@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { use, useEffect } from 'react';
 import { useGameContext } from '@/components/context/GameContext';
 import PlayerInput from '../PlayerInput';
 import Image from 'next/image';
@@ -7,6 +7,15 @@ import Socket from '@/components/network/Socket';
 
 export default function GameFrame() {
     const game = useGameContext();
+
+    useEffect(() => {
+        Socket.on('prompt_set', (data) => {
+            game.setCrimePrompt(data.prompt);
+        });
+        Socket.on('image_url_set', (data) => {
+            game.setCrimeImageURL(data.image_url);
+        });
+    });
 
     return (
         // TODO: switch from criminal to outlaw terminology
@@ -23,7 +32,7 @@ function CriminalFrame({ game }) {
                 <PlayerInput onChange={game.setCrimePrompt} />
                 <div className="flex">
                     <button className="py-2 px-4
-                bg-red-600 border-black  rounded-md w-1/4 font-western2 shadow-md hover:shadow-lg" onClick={() => {Socket.emit('next_game_state', {'lobby_code': game.lobbyCode})}}>Submit</button>
+                bg-red-600 border-black  rounded-md w-1/4 font-western2 shadow-md hover:shadow-lg" onClick={() => {Socket.emit('next_game_state', {'lobby_code': game.lobbyCode}); Socket.emit('set_prompt', {'lobby_code': game.lobbyCode, 'prompt':game.crimePrompt})}}>Submit</button>
                 </div>
             </div>
         </div>
