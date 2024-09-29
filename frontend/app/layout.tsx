@@ -11,7 +11,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <head />
+            <head>
+            <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet"></link>
+            </head>
             <body className="flex flex-col min-h-screen relative overflow-hidden">
                 <GameProvider>
                     <div className="">{children}</div>
