@@ -13,6 +13,13 @@ export default function WaitingRoom() {
             console.log('Lobby players:', data.players);
             const playerList = data.players;
             setPlayers(playerList);
+            Socket.on('lobby_started', (data) => {
+                const users_to_roles = data.users_to_roles;
+                const role = users_to_roles[game.username];
+                console.log('User name: ', game.username);
+                console.log('User role:', role);
+                game.setRole(role);
+            });
         });
         return () => {
             Socket.off('lobby_players');
@@ -53,6 +60,7 @@ export default function WaitingRoom() {
                             }
                             if (game.host) {
                                 Socket.emit('start_lobby', { 'lobby_code': game.lobbyCode });
+                                console.log("Starting game... emitting start_lobby");
                             }
                         }}
                         className={`px-6 py-3  text-white text-2xl rounded ${ players.length > 3 ? "bg-blue-500 hover:bg-blue-600": "bg-gray-400"}`}

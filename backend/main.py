@@ -48,7 +48,7 @@ async def join_lobby(sid, data):
         # Update all users in lobby of new user
         await update_lobby(sid, lobby_code)
     else:
-        await sio.emit('lobby_error', {'message': 'Invalid join code'}, room=sid)
+        await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
 
 @sio.event
 async def start_lobby(sid, data):
@@ -56,7 +56,7 @@ async def start_lobby(sid, data):
     print('Starting lobby')
     if l_manager.start_lobby(lobby_code):
         print('Lobby started')
-        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code)}, room=lobby_code)
+        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code), 'users_to_roles': l_manager.get_usernames_to_roles(lobby_code)}, room=lobby_code)
     else:
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 

@@ -146,5 +146,11 @@ class LobbyManager:
             return self.lobbies[lobby_code].game_state
         return -1
 
+    def get_usernames_to_roles(self, code):
+        if code in self.lobbies:
+            print({user.username: user.role.value for user in self.lobbies[code].users})
+            return {user.username: user.role.value for user in self.lobbies[code].users}
+        return {}
+
     def has_lobby(self, code):
         return code in self.lobbies

@@ -51,6 +51,7 @@ export default function Host() {
                         <Link href="/game">
                             <button className="border border-black rounded px-4 py-2 m-2" onClick={() => {
                                 Socket.emit("create_lobby", { username: username })
+                                game.setUsername(username)
                                 game.setHost(true)
                                 }}>
                                 Start Lobby
