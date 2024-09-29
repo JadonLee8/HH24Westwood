@@ -2,29 +2,29 @@
 import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ConfigWindow() {
     const game = useGameContext();
     const [players, setPlayers] = useState<string[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
-        game.setGameState(0);
-
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             game.setLobbyCode(data.lobby_code);
-
-            Socket.on('lobby_joined', (data) => {
-                console.log('Lobby joined:', data);
-                Socket.emit('lobby_players', { lobby_code: data.lobby_code });
-            });
-
-            Socket.on('lobby_players', (data) => {
-                console.log('Lobby players:', data.players);
-                const playerList = data.players;
-                setPlayers(playerList);
-            })
         });
+
+        Socket.on('lobby_joined', (data) => {
+            console.log('Lobby joined:', data);
+            Socket.emit('lobby_players', { lobby_code: data.lobby_code });
+        });
+
+        Socket.on('lobby_players', (data) => {
+            console.log('Lobby players:', data.players);
+            const playerList = data.players;
+            setPlayers(playerList);
+        })
 
         Socket.on('lobby_started', (data) => {
             console.log('Lobby started:', data.game_state);
@@ -36,7 +36,14 @@ export default function ConfigWindow() {
             });
         });
 
+        Socket.emit('lobby_players', { lobby_code: game.lobbyCode });
+
+        if (!game.lobbyCode) {
+            router.push('/');
+        }
+
         return () => {
+            console.log("Dismounting...")
             Socket.off('lobby_created');
             Socket.off('lobby_joined');
             Socket.off('lobby_players');

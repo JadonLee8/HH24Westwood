@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the shape of the context state
 interface GameContextState {
@@ -9,6 +9,14 @@ interface GameContextState {
     setHost: (host: boolean) => void;
     gameState: number;
     setGameState: (gameState: number) => void;
+    username: string;
+    setUsername: (username: string) => void;
+    crimePrompt: string;
+    setCrimePrompt: (crimePrompt: string) => void;
+    crimeImageURL: string;
+    setCrimeImageURL: (crimeImage: string) => void;
+    role: string;
+    setRole: (role: string) => void;
 }
 
 // Create the context with a default value
@@ -18,16 +26,33 @@ const GameContext = createContext<GameContextState | undefined>(undefined);
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentLobby, setCurrentLobby] = useState<string | null>(null);
     const [host, setHost] = useState<boolean>(false);
-    const [gamemode, setGamemode] = useState<number>(0);
+    const [username, setUsername] = useState<string>('');
+    const [gameState, setGameState] = useState<number>(0);
+    const [role, setRole] = useState<string>('sheriff');
+
+    const setLobbyPrint = (lobbyCode: string) => {
+        console.log('Setting lobby code:', lobbyCode);
+        setCurrentLobby(lobbyCode);
+    }
+    const [crimePrompt, setCrimePrompt] = useState<string>('');
+    const [crimeImageURL, setCrimeImageURL] = useState<string>('');
 
     return (
-        <GameContext.Provider value={{ 
+        <GameContext.Provider value={{
             lobbyCode: currentLobby,
-            setLobbyCode: setCurrentLobby,
+            setLobbyCode: setLobbyPrint,
             host,
             setHost,
-            gameState: gamemode,
-            setGameState: setGamemode
+            gameState: gameState,
+            setGameState: setGameState,
+            username,
+            setUsername: setUsername,
+            crimePrompt,
+            setCrimePrompt: setCrimePrompt,
+            crimeImageURL,
+            setCrimeImageURL: setCrimeImageURL,
+            role,
+            setRole
         }}>
             {children}
         </GameContext.Provider>

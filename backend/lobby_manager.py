@@ -1,14 +1,20 @@
 import string
 from utils.utils import generate_lobby_code
+import random
+from enum import Enum
 
 class User:
     def __init__(self, username=None, sid=None):
         self.username = username
         self.lobbyCode = None
         self.sid = sid
-        self.role = None
+        self.role = None # TODO: randomly assign roles after game starts. When game starts
 
 
+class Role(Enum):
+    OUTLAW = "outlaw"
+    SHERIFF = "sheriff"
+    CITIZEN = "citizen"
 class Lobby:
     def __init__(self, code):
         self.code = code
@@ -18,6 +24,22 @@ class Lobby:
     def start_lobby(self):
         self.game_state = 1
 
+        random.shuffle(self.users)
+
+        # Assign the first user as OUTLAW
+        self.users[0].role = Role.OUTLAW
+
+        # Assign the second user as SHERIFF
+        self.users[1].role = Role.SHERIFF
+
+        # Assign the rest of the users as CITIZEN
+        for user in self.users[2:]:
+            user.role = Role.CITIZEN
+
+        # Print the users and their assigned roles
+        for user in self.users:
+            print(user.username, user.role)
+
     def next_game_state(self):
         if self.game_state < 6:
             self.game_state += 1
@@ -25,10 +47,10 @@ class Lobby:
         return -1
 
     def add_user(self, User):
-        self.users.append(User.sid)
+        self.users.append(User)
 
     def remove_user(self, User):
-        self.users.remove(User.sid)
+        self.users.remove(User)
 
 # TODO: replace username with sid for the identifier. Consider rest of code tho. Might be easier to just prevent duplicate usernames
 # TODO: prevent duplicate usernames
@@ -37,7 +59,7 @@ class LobbyManager:
     def __init__(self):
         self.lobbies = {} # maps lobby code to lobby object
         self.users = {} # maps username to user object
-        self.max_state = 6
+        self.max_state = 8
 
     # Create new user
     def create_user(self, sid, username, code=None):
@@ -47,6 +69,12 @@ class LobbyManager:
         else:
             self.users[username] = User(username, sid)
         return self.users[username]
+
+    def find_user_by_sid(self, sid):
+        for user in self.users:
+            if self.users[user].sid == sid:
+                return user
+        return None
 
     # Delete user and remove from lobby if in one
     def remove_user(self, code, username):
@@ -84,15 +112,21 @@ class LobbyManager:
         return False
 
     def start_lobby(self, code):
-        print(code)
-        print(self.lobbies)
         if code in self.lobbies:
             self.lobbies[code].game_state = 1
+            self.lobbies[code].start_lobby()
             return True
         return False
 
-    def get_users_in_lobby(self, code):
-        return self.lobbies[code].users
+    def get_sids_in_lobby(self, code):
+        return [u.sid for u in self.lobbies[code].users]
+
+    def get_usernames_in_lobby(self, code):
+        if code in self.lobbies:
+            users = self.lobbies[code].users
+            return [user.username for user in users]
+        else:
+            return []
 
     def leave_lobby(self, user, code):
         print("LEAVE LOBBY", user.username, code)
@@ -108,6 +142,7 @@ class LobbyManager:
     def next_game_state(self, lobby_code):
         if self.lobbies[lobby_code].game_state < self.max_state:
             self.lobbies[lobby_code].game_state += 1
+            print(self.lobbies[lobby_code].game_state)
             return self.lobbies[lobby_code].game_state
         return -1
 
