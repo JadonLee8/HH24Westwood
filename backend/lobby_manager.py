@@ -1,5 +1,7 @@
 import string
 from utils.utils import generate_lobby_code
+import random
+from enum import Enum
 
 class User:
     def __init__(self, username=None, sid=None):
@@ -8,6 +10,10 @@ class User:
         self.sid = sid
         self.role = None # TODO: randomly assign roles after game starts. When game starts
 
+class Role(Enum):
+    OUTLAW = "outlaw"
+    SHERIFF = "sheriff"
+    CITIZEN = "citizen"
 
 class Lobby:
     def __init__(self, code):
@@ -17,6 +23,21 @@ class Lobby:
 
     def start_lobby(self):
         self.game_state = 1
+        user_set = set(self.users)
+
+        # Choose a random user and set their role to CRIMINAL
+        random_user = random.choice(list(user_set))
+        random_user.role = Role.CRIMINAL
+        user_set.remove(random_user)
+
+        # Choose a random user and set their role to SHERIFF
+        random_user = random.choice(list(user_set))
+        random_user.role = Role.SHERIFF
+        user_set.remove(random_user)
+
+        # Set the rest of the users to CITIZEN
+        for user in user_set:
+            user.role = Role.CITIZEN
 
     def next_game_state(self):
         if self.game_state < 6:
@@ -47,7 +68,7 @@ class LobbyManager:
         else:
             self.users[username] = User(username, sid)
         return self.users[username]
-    
+
     def find_user_by_sid(self, sid):
         for user in self.users:
             if self.users[user].sid == sid:
@@ -99,7 +120,7 @@ class LobbyManager:
 
     def get_users_in_lobby(self, code):
         return self.lobbies[code].users
-    
+
     def get_usernames_in_lobby(self, code):
         if code in self.lobbies:
             users = self.lobbies[code].users
