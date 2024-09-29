@@ -17,6 +17,11 @@ const JoinForm = () => {
             router.push('/game');
         });
 
+        Socket.on('lobby_error', (data) => {
+            console.error(data.message)
+            alert(data.message)
+        });
+
         return () => {
             Socket.off('lobby_joined');
         }

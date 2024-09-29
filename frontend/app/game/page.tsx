@@ -10,6 +10,10 @@ import WaitingRoom from './components/frames/WaitingRoom';
 import Socket from '@/components/network/Socket';
 import FirstFrame from './components/frames/FirstFrame';
 import ThirdFrame from './components/frames/ThirdFrame';
+import FourthFrame from './components/frames/FourthFrame';
+import FifthFrame from './components/frames/FifthFrame';
+import SixthFrame from './components/frames/SixthFrame';
+import SeventhFrame from './components/frames/SeventhFrame';
 
 export default function Game() {
     const game = useGameContext();
@@ -32,6 +36,14 @@ export default function Game() {
                 return <GameFrame />;
             case 3:
                 return <ThirdFrame />;
+            case 4:
+                return <FourthFrame />;
+            case 5:
+                return <FifthFrame />;
+            case 6:
+                return <SixthFrame />;
+            case 7:
+                return <SeventhFrame />;
             default:
                 return <div>No component selected</div>;
         }

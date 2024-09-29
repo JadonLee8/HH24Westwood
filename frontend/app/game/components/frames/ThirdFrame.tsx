@@ -4,7 +4,7 @@ import { useGameContext } from '@/components/context/GameContext';
 
 export default function ThirdFrame() {
     const game = useGameContext();
-    let proompt = "";
+    let prompt = "";
 
     // Function to make the API call to generate the image
     const generateImage = async (prompt: string) => {
@@ -28,17 +28,40 @@ export default function ThirdFrame() {
     };
 
     useEffect(() => {
-        proompt = game.crimePrompt;
+        prompt = game.crimePrompt;
 
         // Call the image generation function with the prompt
-        if (proompt) {
-            generateImage(proompt);
+        if (prompt) {
+            generateImage(prompt);
         }
     }, [game.crimePrompt]);
 
     return (
         <>
-            {game.crimeImageURL ? <img src={game.crimeImageURL} alt="Generated image" /> : <p>Generating image...</p>}
+            {game.role === 'witness' ? witnessFrame({ game }) : otherFrame()}
         </>
     );
+}
+
+function witnessFrame({ game }) {
+    <>
+        {game.crimeImageURL ?
+            <img src={game.crimeImageURL} alt="Generated image" /> :
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="bg-amber-800 p-5 rounded-lg">
+                    <h1 className="text-white text-4xl font-western">Generating Image...</h1>
+                </div>
+            </div>
+        }
+    </>
+}
+
+function otherFrame() {
+    <>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="bg-amber-800 p-5 rounded-lg">
+                <h1 className="text-white text-4xl font-western">Witnesses are being attacked...</h1>
+            </div>
+        </div>
+    </>
 }
