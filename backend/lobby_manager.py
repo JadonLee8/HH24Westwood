@@ -23,6 +23,7 @@ class Lobby:
         self.images = {}
         self.image_url = ""
         self.prompt = ""
+        self.witness_account = ""
 
     def start_lobby(self):
         self.game_state = 1
@@ -168,6 +169,10 @@ class LobbyManager:
     def set_prompt(self, code, prompt):
         if code in self.lobbies:
             self.lobbies[code].prompt = prompt
+
+    def set_witness_account(self, code, witness_account):
+        if code in self.lobbies:
+            self.lobbies[code].witness_account = witness_account
 
     def has_lobby(self, code):
         return code in self.lobbies
