@@ -9,6 +9,8 @@ export default function Status(){
     const game = useGameContext();
     var playerRole = '';
 
+    // TODO: make it so that if you are host (by checking game.host), you can start the game (emit 'next_game_state' with the next game state)
+
     Socket.emit('lobby_players', { lobby_code: game.lobbyCode }); // TODO: I probably am going about this wrong
     useEffect(() => {
         Socket.on('lobby_players', (data) => {
