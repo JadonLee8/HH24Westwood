@@ -20,7 +20,6 @@ const GameContext = createContext<GameContextState | undefined>(undefined);
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentLobby, setCurrentLobby] = useState<string | null>(null);
     const [host, setHost] = useState<boolean>(false);
-    const [gamemode, setGamemode] = useState<number>(0);
     const [username, setUsername] = useState<string>('');
     const [gameState, setGameState] = useState<number>(0);
 

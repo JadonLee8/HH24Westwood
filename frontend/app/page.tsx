@@ -144,7 +144,7 @@ export default function Home() {
                     JOIN GAME
                 </a>
                 <a
-                    href="#"
+                    href="/host"
                     className="text-white text-4xl font-normal transition duration-100 ease-in-out hover:text-gray-300 hover:scale-105 text-outline-thick"
                     style={{ fontFamily: 'WesternBangBang' }}
                     onMouseEnter={playSound}
