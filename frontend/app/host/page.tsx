@@ -51,6 +51,7 @@ export default function Host() {
                                 className="start-lobby-button"
                                 onClick={() => {
                                     Socket.emit("create_lobby", { username: username });
+                                    game.setUsername(username)
                                     game.setHost(true);
                                 }}
                             />

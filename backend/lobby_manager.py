@@ -13,13 +13,14 @@ class User:
 
 class Role(Enum):
     OUTLAW = "outlaw"
-    SHERIFF = "sheriff"
+    WITNESS = "witness"
     CITIZEN = "citizen"
 class Lobby:
     def __init__(self, code):
         self.code = code
         self.users = []
         self.game_state = 0
+        self.images = {}
 
     def start_lobby(self):
         self.game_state = 1
@@ -30,7 +31,7 @@ class Lobby:
         self.users[0].role = Role.OUTLAW
 
         # Assign the second user as SHERIFF
-        self.users[1].role = Role.SHERIFF
+        self.users[1].role = Role.WITNESS
 
         # Assign the rest of the users as CITIZEN
         for user in self.users[2:]:
@@ -51,6 +52,12 @@ class Lobby:
 
     def remove_user(self, User):
         self.users.remove(User)
+    
+    def add_image(self, sid, image):
+        self.images[sid] = image
+        return len(self.images) == len(self.users) - 2
+            
+        
 
 # TODO: replace username with sid for the identifier. Consider rest of code tho. Might be easier to just prevent duplicate usernames
 # TODO: prevent duplicate usernames
@@ -145,6 +152,12 @@ class LobbyManager:
             print(self.lobbies[lobby_code].game_state)
             return self.lobbies[lobby_code].game_state
         return -1
+
+    def get_usernames_to_roles(self, code):
+        if code in self.lobbies:
+            print({user.username: user.role.value for user in self.lobbies[code].users})
+            return {user.username: user.role.value for user in self.lobbies[code].users}
+        return {}
 
     def has_lobby(self, code):
         return code in self.lobbies

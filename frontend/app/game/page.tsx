@@ -20,6 +20,15 @@ export default function Game() {
 
 
     useEffect(() => {
+        Socket.on('lobby_started', (data) => {
+            console.log('Lobby started:', data);
+            game.setLobbyCode(data.lobby_code);
+            const users_to_roles = data.users_to_roles;
+            const role = users_to_roles[game.username];
+            console.log('User name: ', game.username);
+            console.log('User role:', role);
+            game.setRole(role);
+        });
         Socket.on('next_game_state', (data) => {
             game.setGameState(data.game_state);
             console.log('Next game state:', data.game_state);
