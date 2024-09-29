@@ -83,6 +83,35 @@ async def lobby_canvas_data(sid, data):
     images = [image_dict[key] for key in image_dict]
     await sio.emit('lobby_canvas_data', {'users': users, 'images': images}, room=lobby_code)
 
+@sio.event
+async def user_ratings(sid, data):
+    lobby_code = data['lobby_code']
+    lobby = l_manager.lobbies[lobby_code]
+    image_ratings = lobby.image_ratings
+    key = data['users'][data['index']]
+    print(key)
+    if data[key] in image_ratings:
+        print("Adding to existing rating")
+        image_ratings[key] += data['rating']
+    else:
+        print("Adding new rating", data['rating'])
+        image_ratings[key] = data['rating']
+    
+@sio.event
+async def end_round(sid, data):
+    await next_game_state(sid, {'lobby_code': data['lobby_code']})
+
+@sio.event
+async def lobby_user_ratings(sid, data):
+    lobby_code = data['lobby_code']
+    # lobby = l_manager.lobbies[lobby_code]
+    # ratings = lobby.image_ratings.values()
+    # users = lobby.image_ratings.keys()
+    # print("Lobby user ratings: ", lobby.image_ratings)
+    # print(ratings)
+    # print(users)
+    # await sio.emit('lobby_user_ratings', {'ratings': ratings, 'users': users }, room=lobby_code)
+
 async def join_lobby(sid, username, code):
     l_manager.join_lobby(username, code)
     await sio.enter_room(sid, code)

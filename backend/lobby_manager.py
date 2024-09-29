@@ -21,6 +21,8 @@ class Lobby:
         self.users = []
         self.game_state = 0
         self.images = {}
+        self.image_ratings = {}
+        self.img_r_amt = 0
 
     def start_lobby(self):
         self.game_state = 1
