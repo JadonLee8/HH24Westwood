@@ -9,17 +9,14 @@ import GameBackground from './components/GameBackground';
 
 export default function Game() {
     return (
-        <GameProvider>
-            <div className="h-screen overflow-hidden">
-                
-                <LobbyCode />
-                {/* <ConfigWindow /> */}
-                
-                <GameFrame />
+        <div className="h-screen overflow-hidden">
 
-                <GameBackground />
-                <GameFilter />
-            </div>
-        </GameProvider>
+            <LobbyCode />
+            <ConfigWindow />
+            <GameFrame />
+
+            <GameBackground />
+            <GameFilter />
+        </div>
     );
 }
