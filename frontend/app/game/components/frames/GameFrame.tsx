@@ -2,13 +2,18 @@
 import React from 'react';
 import { useGameContext } from '@/components/context/GameContext';
 import PlayerInput from '../PlayerInput';
-import { useState } from 'react';
 
 export default function GameFrame() {
     const game = useGameContext();
 
     return (
         // TODO: if your not the criminal just say you are asleep
+        game.role === "Criminal" ? (<CriminalFrame game={game} />) : (<InnocentFrame />)
+    );
+}
+
+function CriminalFrame({ game }) {
+    return (
         <div className="flex items-center justify-center min-h-screen shadow-2xl">
             <div className="bg-amber-900 p-5 m-5 rounded-md">
                 <h1 className="text-5xl text-white font-western">Enter your crime:</h1>
@@ -16,9 +21,17 @@ export default function GameFrame() {
                 <PlayerInput onChange={game.setCrimePrompt} />
                 <div className="flex">
                     <button className="py-2 px-4 
-                    bg-red-600 border-black  rounded-md w-1/4 font-western2 shadow-md hover:shadow-lg" onClick={() => {}}>Submit</button>
+                bg-red-600 border-black  rounded-md w-1/4 font-western2 shadow-md hover:shadow-lg" onClick={() => { }}>Submit</button>
                 </div>
             </div>
+        </div>
+    );
+}
+
+function InnocentFrame() {
+    return (
+        <div className="h-screen w-screen bg-green-500">
+            <h1 className="text-white text-4xl">You are asleep</h1>
         </div>
     );
 }
