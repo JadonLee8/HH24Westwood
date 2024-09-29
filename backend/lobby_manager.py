@@ -6,7 +6,7 @@ class User:
         self.username = username
         self.lobbyCode = None
         self.sid = sid
-        self.role = None
+        self.role = None # TODO: randomly assign roles after game starts. When game starts
 
 
 class Lobby:
