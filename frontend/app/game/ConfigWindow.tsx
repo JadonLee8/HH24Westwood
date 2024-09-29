@@ -4,15 +4,15 @@ import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
 
 export default function ConfigWindow() {
-    const { lobbyCode: currentLobbyCode, setLobbyCode, host, setHost, gameState, setGameState } = useGameContext();
+    const game = useGameContext();
     const [players, setPlayers] = useState<string[]>([]);
 
     useEffect(() => {
-        setGameState(0);
+        game.setGameState(0);
 
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
-            setLobbyCode(data.lobby_code);
+            game.setLobbyCode(data.lobby_code);
 
             Socket.on('lobby_joined', (data) => {
                 console.log('Lobby joined:', data);
@@ -28,11 +28,11 @@ export default function ConfigWindow() {
 
         Socket.on('lobby_started', (data) => {
             console.log('Lobby started:', data.game_state);
-            setLobbyCode(data.lobby_code);
-            setGameState(data.game_state);
+            game.setLobbyCode(data.lobby_code);
+            game.setGameState(data.game_state);
             Socket.on('next_game_state', (data) => {
                 console.log('Next game state:', data.game_state);
-                setGameState(data.game_state);
+                game.setGameState(data.game_state);
             });
         });
 
@@ -51,18 +51,17 @@ export default function ConfigWindow() {
     return (
         <>
             <div className="p-5 m-4 bg-slate-600 absolute rounded-md">
-                <p>Hosted Lobby: {currentLobbyCode ?? "None"}</p>
-                <p>Host: {host ? 'Yes' : 'No'}</p>
-                <p>Game State: {gameState}</p>
+                <p>Hosted Lobby: {game.lobbyCode ?? "None"}</p>
+                <p>Host: {game.host ? 'Yes' : 'No'}</p>
+                <p>Game State: {game.gameState}</p>
                 <p>Players: </p>
                 <ul>
                     {players.length > 0 ? players.map((player, i) => <li key={i}>{player}</li>) : <li>No players</li>}
                 </ul>
-                <p>Game State: {gameState}</p>
-                <button onClick={() => Socket.emit('start_lobby', { 'lobby_code': currentLobbyCode })} className="border border-black rounded px-4 py-2 m-2">
+                <button onClick={() => Socket.emit('start_lobby', { 'lobby_code': game.lobbyCode })} className="border border-black rounded px-4 py-2 m-2">
                     Start Game
                 </button>
-                <button onClick={() => Socket.emit('next_game_state', { 'lobby_code': currentLobbyCode })} className="border border-black rounded px-4 py-2 m-2">
+                <button onClick={() => Socket.emit('next_game_state', { 'lobby_code': game.lobbyCode })} className="border border-black rounded px-4 py-2 m-2">
                     Next Game State
                 </button>
             </div>
