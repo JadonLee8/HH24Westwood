@@ -1,4 +1,4 @@
-export default function FourthFrame() {
+export default function SeventhFrame() {
     return (
         <></>
     );
