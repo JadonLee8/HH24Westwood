@@ -11,6 +11,10 @@ interface GameContextState {
     setGameState: (gameState: number) => void;
     username: string;
     setUsername: (username: string) => void;
+    crimePrompt: string;
+    setCrimePrompt: (crimePrompt: string) => void;
+    crimeImageURL: string;
+    setCrimeImageURL: (crimeImage: string) => void;
 }
 
 // Create the context with a default value
@@ -27,6 +31,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.log('Setting lobby code:', lobbyCode);
         setCurrentLobby(lobbyCode);
     }
+    const [crimePrompt, setCrimePrompt] = useState<string>('');
+    const [crimeImageURL, setCrimeImageURL] = useState<string>('');
 
     return (
         <GameContext.Provider value={{
@@ -37,7 +43,11 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             gameState: gameState,
             setGameState: setGameState,
             username,
-            setUsername: setUsername
+            setUsername: setUsername,
+            crimePrompt,
+            setCrimePrompt: setCrimePrompt,
+            crimeImageURL,
+            setCrimeImageURL: setCrimeImageURL
         }}>
             {children}
         </GameContext.Provider>
