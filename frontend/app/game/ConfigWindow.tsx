@@ -8,6 +8,8 @@ export default function ConfigWindow() {
     const [players, setPlayers] = useState<string[]>([]);
 
     useEffect(() => {
+        setGameState(0);
+
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             setLobbyCode(data.lobby_code);

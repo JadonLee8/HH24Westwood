@@ -106,10 +106,8 @@ class LobbyManager:
         return self.lobbies[lobby_code].game_state
 
     def next_game_state(self, lobby_code):
-        print(self.lobbies[lobby_code].game_state)
         if self.lobbies[lobby_code].game_state < self.max_state:
             self.lobbies[lobby_code].game_state += 1
-            print("NEXT GAME STATE", self.lobbies[lobby_code].game_state)
             return self.lobbies[lobby_code].game_state
         return -1
 

@@ -28,9 +28,12 @@ async def connect_user(sid, username, code):
         await sio.emit('error', {'message': 'No lobby code provided'}, room=sid)
 
 @sio.event
-async def disconnect(sid, code, username):
+async def disconnect(sid):
     print(f"Client disconnected: {sid}")
-    l_manager.remove_user(sid, code, username)
+
+@sio.event
+async def disconnect_user(sid, code, username):
+        l_manager.remove_user(sid, code, username)
 
 @sio.event
 async def create_lobby(sid, data):
