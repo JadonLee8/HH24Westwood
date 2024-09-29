@@ -44,7 +44,7 @@ export default function ThirdFrame() {
 }
 
 function witnessFrame({ game }) {
-    <>
+    return <>
         {game.crimeImageURL ?
             <img src={game.crimeImageURL} alt="Generated image" /> :
             <div className="flex items-center justify-center min-h-screen">
@@ -57,10 +57,10 @@ function witnessFrame({ game }) {
 }
 
 function otherFrame() {
-    <>
+    return <>
         <div className="flex items-center justify-center min-h-screen">
             <div className="bg-amber-800 p-5 rounded-lg">
-                <h1 className="text-white text-4xl font-western">Witnesses are being attacked...</h1>
+                <h1 className="text-white text-4xl font-western">You hear a disturbance in the night...</h1>
             </div>
         </div>
     </>

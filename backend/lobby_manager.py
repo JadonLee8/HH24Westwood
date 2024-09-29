@@ -13,7 +13,7 @@ class User:
 
 class Role(Enum):
     OUTLAW = "outlaw"
-    SHERIFF = "sheriff"
+    WITNESS = "witness"
     CITIZEN = "citizen"
 class Lobby:
     def __init__(self, code):
@@ -31,7 +31,7 @@ class Lobby:
         self.users[0].role = Role.OUTLAW
 
         # Assign the second user as SHERIFF
-        self.users[1].role = Role.SHERIFF
+        self.users[1].role = Role.WITNESS
 
         # Assign the rest of the users as CITIZEN
         for user in self.users[2:]:
