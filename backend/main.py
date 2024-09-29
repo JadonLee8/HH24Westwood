@@ -96,7 +96,7 @@ async def user_ratings(sid, data):
     else:
         print("Adding new rating", data['rating'])
         image_ratings[key] = data['rating']
-    
+
 @sio.event
 async def end_round(sid, data):
     await next_game_state(sid, {'lobby_code': data['lobby_code']})
