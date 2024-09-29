@@ -2,11 +2,12 @@ import string
 from utils.utils import generate_lobby_code
 
 class User:
-    def __init__(self, username, sid):
+    def __init__(self, username=None, sid=None):
         self.username = username
         self.lobbyCode = None
         self.sid = sid
         self.role = None
+
 
 class Lobby:
     def __init__(self, code):
@@ -39,11 +40,13 @@ class LobbyManager:
         self.max_state = 6
 
     # Create new user
-    def create_user(self, sid, username, code):
-        self.lobbies[code].add_user(User(username, sid))
-
-    def create_user(self, username, sid):
-        return User(username, sid)
+    def create_user(self, sid, username, code=None):
+        if code:
+            self.lobbies[code].add_user(User(username, sid))
+            self.users[username] = self.lobbies[code].users[-1]
+        else:
+            self.users[username] = User(username, sid)
+        return self.users[username]
 
     # Delete user and remove from lobby if in one
     def remove_user(self, code, username):
@@ -80,6 +83,8 @@ class LobbyManager:
         return False
 
     def start_lobby(self, code):
+        print(code)
+        print(self.lobbies)
         if code in self.lobbies:
             self.lobbies[code].game_state = 1
             return True
@@ -100,7 +105,12 @@ class LobbyManager:
         return self.lobbies[lobby_code].game_state
 
     def next_game_state(self, lobby_code):
+        print(self.lobbies[lobby_code].game_state)
         if self.lobbies[lobby_code].game_state < self.max_state:
             self.lobbies[lobby_code].game_state += 1
+            print("NEXT GAME STATE", self.lobbies[lobby_code].game_state)
             return self.lobbies[lobby_code].game_state
         return -1
+
+    def has_lobby(self, code):
+        return code in self.lobbies

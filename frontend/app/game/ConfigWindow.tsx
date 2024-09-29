@@ -25,16 +25,17 @@ export default function ConfigWindow() {
         });
 
         Socket.on('lobby_started', (data) => {
+            console.log(data);
             console.log('Lobby started:', data.game_state);
             setLobbyCode(data.lobby_code);
             setGameState(data.game_state);
+            console.log('Game state:', gameState);
+            console.log('Game state:', data.game_state);
             Socket.on('next_game_state', (data) => {
                 console.log('Next game state:', data.game_state);
                 setGameState(data.game_state);
             });
         });
-
-        Socket.emit('create_lobby');
 
         return () => {
             Socket.off('lobby_created');
