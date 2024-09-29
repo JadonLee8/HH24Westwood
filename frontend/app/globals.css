@@ -1,7 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-
+@import 'https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap';
 
 @font-face {
     font-family: 'Carnivalee Freakshow';
@@ -17,3 +17,21 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'RioGrande';
+    src: url('/fonts/RioGrande.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'TexasBold';
+    src: url('/fonts/TexasBold.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'West';
+    src: url('/fonts/West.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
