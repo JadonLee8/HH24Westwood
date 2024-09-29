@@ -9,6 +9,8 @@ interface GameContextState {
     setHost: (host: boolean) => void;
     gameState: number;
     setGameState: (gameState: number) => void;
+    username: string;
+    setUsername: (username: string) => void;
 }
 
 // Create the context with a default value
@@ -18,6 +20,8 @@ const GameContext = createContext<GameContextState | undefined>(undefined);
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentLobby, setCurrentLobby] = useState<string | null>(null);
     const [host, setHost] = useState<boolean>(false);
+    const [gamemode, setGamemode] = useState<number>(0);
+    const [username, setUsername] = useState<string>('');
     const [gameState, setGameState] = useState<number>(0);
 
     const setLobbyPrint = (lobbyCode: string) => {
@@ -26,13 +30,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     return (
-        <GameContext.Provider value={{ 
+        <GameContext.Provider value={{
             lobbyCode: currentLobby,
             setLobbyCode: setLobbyPrint,
             host,
             setHost,
             gameState: gameState,
-            setGameState: setGameState
+            setGameState: setGameState,
+            username,
+            setUsername: setUsername
         }}>
             {children}
         </GameContext.Provider>
