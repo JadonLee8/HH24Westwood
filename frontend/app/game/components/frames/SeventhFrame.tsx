@@ -1,44 +1,51 @@
-'use client'
-import { useState, useEffect } from "react";
 import Socket from "@/components/network/Socket";
-import { useGameContext } from "@/components/context/GameContext";
-import { Slider } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useGameContext } from '@/components/context/GameContext';
 
-export default function SixthFrame() {
-    const game = useGameContext();
-    const [images, setImages] = useState<string[]>([]);
-    const [users, setUsers] = useState<string[]>([]);
-    const [ratings, setRatings] = useState<number[]>([]);
+interface UserRating {
+    username: string;
+    rating: number; // Assuming rating is a number; adjust if it's a different type
+}
+
+interface LobbyUserRatings {
+    users: UserRating[];
+}
+
+export default function SeventhFrame() {
+    const [playerRatings, setPlayerRatings] = useState<Record<string, number>>({}); // Use state to hold player ratings
 
     useEffect(() => {
-        Socket.emit('lobby_user_ratings', { lobby_code: game.lobbyCode })
-        Socket.on('lobby_user_ratings', (data) => {
+        // Add event listeners here
+        const handleUserRatings = (data: LobbyUserRatings) => {
             console.log('User ratings:', data);
-            setUsers(data.users);
-            setRatings(data.ratings);
-        })
+            const ratings: Record<string, number> = {};
+            data.users.forEach(user => {
+                ratings[user.username] = user.rating; // Collect ratings
+            });
+            setPlayerRatings(ratings); // Update state with the new ratings
+        };
 
+        Socket.on('lobby_user_ratings', handleUserRatings);
+
+        // Cleanup function to remove the event listener when the component unmounts
         return () => {
-            Socket.off('lobby_canvas_data');
-        }
-    }, [])
-
+            Socket.off('lobby_user_ratings', handleUserRatings);
+        };
+    }, []); // Empty dependency array ensures this runs once on mount
 
     return (
         <>
-            <div className="flex items-center justify-center min-h-screen shadow-2xl">
-                <div className="bg-amber-900 p-5 m-5 rounded-md">
-                    <h1 className="text-5xl text-white font-western">Ratings:</h1>
-                    <div className="flex flex-col">
-                        {users && users.map((user, index) => (
-                            <div key={index} className="flex items-center justify-between">
-                                <h1 className="text-3xl text-white font-western">{user}:</h1>
-                                <h1 className="text-3xl text-white font-western">{ratings[index]}:</h1>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            {Object.keys(playerRatings).length === 0 ? (
+                <div>Loading...</div>
+            ) : (
+                <ul>
+                    {Object.entries(playerRatings).map(([username, rating]) => (
+                        <li key={username}>
+                            {username}: {rating}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </>
     );
 }
