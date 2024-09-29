@@ -19,21 +19,9 @@ async def connect(sid, environ):
     print(f"Client connected: {sid}")
 
 @sio.event
-async def connect_user(sid, username, code):
-    user = l_manager.create_user(username, sid)
-    print(f"User connected: {user.username}")
-    if code is not None:
-        await join_lobby(user, code)
-    else:
-        await sio.emit('error', {'message': 'No lobby code provided'}, room=sid)
-
-@sio.event
 async def disconnect(sid):
     print(f"Client disconnected: {sid}")
-
-@sio.event
-async def disconnect_user(sid, code, username):
-        l_manager.remove_user(sid, code, username)
+    # TODO: remove user from lobby if in one
 
 @sio.event
 async def create_lobby(sid, data):
@@ -41,16 +29,24 @@ async def create_lobby(sid, data):
     user = l_manager.create_user(sid, data['username'])
     # TODO: check if the user is already in a lobby
     lobby_code = l_manager.create_lobby()
+    print("Lobby created with code: ", lobby_code)
     await join_lobby(sid, data['username'], lobby_code)
+    await sio.enter_room(sid, lobby_code)
     await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
+
+async def update_lobby(sid, code):
+    sio.emit('lobby_players', {'players': l_manager.get_users_in_lobby(code)}, room=code)
 
 @sio.event
 async def join_lobby(sid, data):
     lobby_code = data['lobby_code']
+    user = l_manager.create_user(sid, data['username'])
     if l_manager.join_lobby(data['username'], lobby_code):
+        print("User joined lobby: ", data['username'], lobby_code)
         await sio.enter_room(sid, lobby_code)
         await sio.emit('lobby_joined', {'lobby_code': lobby_code}, room=lobby_code)
-        await sio.emit('lobby_players', { 'lobby_code': lobby_code }, room=lobby_code)
+        # Update all users in lobby of new user
+        await update_lobby(sid, lobby_code)
     else:
         await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
 
@@ -66,7 +62,7 @@ async def start_lobby(sid, data):
 
 @sio.event
 async def lobby_players(sid, data):
-    lobby_list = l_manager.get_lobby_list(data['lobby_code'])
+    lobby_list = l_manager.get_usernames_in_lobby(data['lobby_code'])
     print("Lobby players requested: ", lobby_list)
     await sio.emit('lobby_players', {'players': lobby_list}, room=sid)
 

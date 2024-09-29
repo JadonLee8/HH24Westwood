@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the shape of the context state
 interface GameContextState {
@@ -24,19 +24,24 @@ const GameContext = createContext<GameContextState | undefined>(undefined);
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentLobby, setCurrentLobby] = useState<string | null>(null);
     const [host, setHost] = useState<boolean>(false);
-    const [gamemode, setGamemode] = useState<number>(0);
     const [username, setUsername] = useState<string>('');
+    const [gameState, setGameState] = useState<number>(0);
+
+    const setLobbyPrint = (lobbyCode: string) => {
+        console.log('Setting lobby code:', lobbyCode);
+        setCurrentLobby(lobbyCode);
+    }
     const [crimePrompt, setCrimePrompt] = useState<string>('');
     const [crimeImageURL, setCrimeImageURL] = useState<string>('');
 
     return (
         <GameContext.Provider value={{
             lobbyCode: currentLobby,
-            setLobbyCode: setCurrentLobby,
+            setLobbyCode: setLobbyPrint,
             host,
             setHost,
-            gameState: gamemode,
-            setGameState: setGamemode,
+            gameState: gameState,
+            setGameState: setGameState,
             username,
             setUsername: setUsername,
             crimePrompt,
