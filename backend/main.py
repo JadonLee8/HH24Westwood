@@ -46,7 +46,7 @@ async def join_lobby(sid, data):
         # Update all users in lobby of new user
         await update_lobby(sid, lobby_code)
     else:
-        await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
+        await sio.emit('lobby_error', {'message': 'Invalid join code'}, room=sid)
 
 @sio.event
 async def start_lobby(sid, data):

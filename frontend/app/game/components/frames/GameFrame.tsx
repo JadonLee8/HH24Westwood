@@ -2,6 +2,7 @@
 import React from 'react';
 import { useGameContext } from '@/components/context/GameContext';
 import PlayerInput from '../PlayerInput';
+import Image from 'next/image';
 
 export default function GameFrame() {
     const game = useGameContext();
@@ -30,8 +31,10 @@ function CriminalFrame({ game }) {
 
 function InnocentFrame() {
     return (
-        <div className="h-screen w-screen bg-green-500">
-            <h1 className="text-white text-4xl">You are asleep</h1>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="bg-amber-800 p-5 rounded-lg">
+                <h1 className="text-white text-4xl font-western">You are asleep...</h1>
+            </div>
         </div>
     );
 }

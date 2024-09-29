@@ -47,11 +47,15 @@ export default function WaitingRoom() {
                 <div className="absolute bottom-10 right-10">
                     <button
                         onClick={() => {
+                            if (players.length < 4) {
+                                alert('You need at least 4 players to start the game');
+                                return;
+                            }
                             if (game.host) {
                                 Socket.emit('next_game_state', { 'lobby_code': game.lobbyCode });
                             }
                         }}
-                        className="px-6 py-3 bg-blue-500 text-white text-2xl rounded"
+                        className={`px-6 py-3  text-white text-2xl rounded ${ players.length > 3 ? "bg-blue-500 hover:bg-blue-600": "bg-gray-400"}`}
                     >
                         Start Game
                     </button>

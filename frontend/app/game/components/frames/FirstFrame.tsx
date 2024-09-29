@@ -17,6 +17,7 @@ export default function Status() {
             console.log('Lobby players:', data.players);
             const playerList = data.players;
             playerRole = playerList.find(player => player.username === game.username)?.role;
+            game.setRole(playerRole);
         });
     });
 
