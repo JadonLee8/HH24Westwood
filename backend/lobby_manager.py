@@ -47,6 +47,12 @@ class LobbyManager:
         else:
             self.users[username] = User(username, sid)
         return self.users[username]
+    
+    def find_user_by_sid(self, sid):
+        for user in self.users:
+            if self.users[user].sid == sid:
+                return user
+        return None
 
     # Delete user and remove from lobby if in one
     def remove_user(self, code, username):
@@ -93,6 +99,13 @@ class LobbyManager:
 
     def get_users_in_lobby(self, code):
         return self.lobbies[code].users
+    
+    def get_usernames_in_lobby(self, code):
+        if code in self.lobbies:
+            users = self.lobbies[code].users
+            return [self.find_user_by_sid(user) for user in users]
+        else:
+            return []
 
     def leave_lobby(self, user, code):
         print("LEAVE LOBBY", user.username, code)
