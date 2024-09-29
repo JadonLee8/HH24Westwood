@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { useGameContext } from '@/components/context/GameContext';
-import PlayerInput from './PlayerInput';
+import PlayerInput from '../PlayerInput';
 import { useState } from 'react';
 
 export default function GameFrame() {

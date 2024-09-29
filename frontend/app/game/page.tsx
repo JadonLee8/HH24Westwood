@@ -3,13 +3,13 @@ import React from 'react';
 import ConfigWindow from './ConfigWindow';
 import { GameProvider, useGameContext } from '@/components/context/GameContext';
 import LobbyCode from './components/LobbyCode';
-import GameFrame from './components/GameFrame';
+import GameFrame from './components/frames/GameFrame';
 import GameFilter from './components/GameFilter';
 import GameBackground from './components/GameBackground';
-import WaitingRoom from './components/WaitingRoom';
+import WaitingRoom from './components/frames/WaitingRoom';
 import Socket from '@/components/network/Socket';
-import FirstFrame from './components/FirstFrame';
-import ThirdFrame from './components/ThirdFrame';
+import FirstFrame from './components/frames/FirstFrame';
+import ThirdFrame from './components/frames/ThirdFrame';
 
 export default function Game() {
     const game = useGameContext();
