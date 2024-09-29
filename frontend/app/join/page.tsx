@@ -5,6 +5,7 @@ import Socket from '@/components/network/Socket';
 export default function Join() {
     const [joinCode, setJoinCode] = useState('');
     const [lobby, setLobby] = useState(null);
+    const [username, setUsername] = useState('');
 
     useEffect(() => {
         Socket.on('lobby_joined', (data) => {
@@ -24,9 +25,9 @@ export default function Join() {
 
 
     const handleJoinLobby = () => {
-        if (joinCode.trim()) {
+        if (joinCode.trim() && username.trim()) { // check this if statement. I'm feeling ... iffy ... about it. HAHAHAHA
             console.log("Attempting to join lobby", joinCode);
-            Socket.emit('join_lobby', { lobby_code: joinCode });
+            Socket.emit('join_lobby', { username: username, lobby_code: joinCode });
         }
     };
 
