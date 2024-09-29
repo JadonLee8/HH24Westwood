@@ -1,7 +1,5 @@
-import asyncio
 import socketio
 from aiohttp import web
-from utils.utils import generate_lobby_code
 import lobby_manager
 
 # Create a Socket.IO server
