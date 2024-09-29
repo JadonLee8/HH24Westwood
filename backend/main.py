@@ -25,6 +25,7 @@ async def disconnect(sid):
 async def create_lobby(sid, data):
     lobby_code = None
     user = l_manager.create_user(sid, data['username'])
+    print("User created: ", user.username)
     # TODO: check if the user is already in a lobby
     lobby_code = l_manager.create_lobby()
     print("Lobby created with code: ", lobby_code)
@@ -33,7 +34,8 @@ async def create_lobby(sid, data):
     await sio.emit('lobby_created', {'lobby_code': lobby_code}, room=sid)
 
 async def update_lobby(sid, code):
-    sio.emit('lobby_players', {'players': l_manager.get_users_in_lobby(code)}, room=code)
+    print(l_manager.get_sids_in_lobby(code))
+    sio.emit('lobby_players', {'players': l_manager.get_sids_in_lobby(code)}, room=code)
 
 @sio.event
 async def join_lobby(sid, data):
@@ -46,7 +48,7 @@ async def join_lobby(sid, data):
         # Update all users in lobby of new user
         await update_lobby(sid, lobby_code)
     else:
-        await sio.emit('lobby_error', {'message': 'Invalid join code'}, room=sid)
+        await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
 
 @sio.event
 async def start_lobby(sid, data):
@@ -54,8 +56,10 @@ async def start_lobby(sid, data):
     print('Starting lobby')
     if l_manager.start_lobby(lobby_code):
         print('Lobby started')
-        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code)}, room=lobby_code)
-    else:
+        users_to_roles = l_manager.get_usernames_to_roles(lobby_code)
+        for user, role in users_to_roles.items():
+            print(f"User: {user}, Role: {role}")
+        await sio.emit('lobby_started', { 'lobby_code': lobby_code, 'game_state': l_manager.get_game_state(lobby_code), 'users_to_roles': users_to_roles}, room=lobby_code)
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
 @sio.event

@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 const JoinForm = () => {
     const game = useGameContext();
     const [joinCode, setJoinCode] = useState('');
-    const [username, setUsername] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -28,10 +27,10 @@ const JoinForm = () => {
     }, []);
 
     const handlePlayClick = () => {
-        console.log("Nickname:", username);
+        console.log("Nickname:", game.username);
         console.log("Game Code:", joinCode);
         console.log("Attempting to join lobby", joinCode);
-        Socket.emit('join_lobby', { lobby_code: joinCode, username: username });
+        Socket.emit('join_lobby', { lobby_code: joinCode, username: game.username });
     };
 
     return (
@@ -43,9 +42,9 @@ const JoinForm = () => {
                 type="text"
                 placeholder="Enter Nickname"
                 className="p-2 rounded-md text-black w-1/2"
-                value={username}
+                value={game.username}
                 maxLength={15} // Max 15 characters for nickname
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => game.setUsername(e.target.value)}
             />
             <input
                 type="text"

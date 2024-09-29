@@ -1,35 +1,63 @@
-'use client'
+'use client';
 import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
-
 
 export default function Status() {
     const game = useGameContext();
-    var playerRole = '';
+    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const [isFading, setIsFading] = useState(false);
+    const [showRole, setShowRole] = useState(false);
 
-    // TODO: make it so that if you are host (by checking game.host), you can start the game (emit 'next_game_state' with the next game state)
-    // maybe move this to gameState
-    Socket.emit('lobby_players', { lobby_code: game.lobbyCode }); // TODO: I probably am going about this wrong
+    // List of texts to display before revealing the role
+    const textSeries = [
+        "Many many years ago...",
+        "In the wild wild west of TAMU",
+        "Heroes and villains emerge from the shadows of Howdy Hack 24...",
+        "And now, your role is revealed..."
+    ];
+
+    // Manage the timing of the text fade-in/fade-out
     useEffect(() => {
-        Socket.on('lobby_players', (data) => {
-            console.log('Lobby players:', data.players);
-            const playerList = data.players;
-            playerRole = playerList.find(player => player.username === game.username)?.role;
-            game.setRole(playerRole);
-        });
-    });
+        if (currentTextIndex < textSeries.length) {
+            setIsFading(true);
+            const fadeTimeout = setTimeout(() => {
+                setIsFading(false); // Start fading out
+                const nextTextTimeout = setTimeout(() => {
+                    setCurrentTextIndex((prev) => prev + 1); // Move to the next text
+                    setIsFading(true); // Fade-in the next text
+                }, 1000); // Delay before showing the next text
+                return () => clearTimeout(nextTextTimeout);
+            }, 3000); // How long the text stays visible before fading out
+            return () => clearTimeout(fadeTimeout);
+        } else {
+            // After showing all texts, reveal the role
+            setShowRole(true);
+            const progressTimeout = setTimeout(() => {
+                Socket.emit('next_game_state', { 'lobby_code': game.lobbyCode });
+            }, 5000); // Delay before showing the next text
+            return () => clearTimeout(progressTimeout);
+        }
+    }, [currentTextIndex]);
 
     return (
         <>
-            {/* NOTE: for now the role is irrelevant. everyone enters a prompt and sees an image. I just need this to work */}
-            {/* TODO: display text after text fading in and out to describe the story up to this point, then display role, then automatically advance game state */}
             <div className="flex items-center justify-center min-h-screen shadow-2xl">
                 <div className="bg-amber-900 p-5 m-5 rounded-md">
-                    <h1 className="text-3xl text-white font-western1">Your role in the game is: {playerRole}</h1>
+                    {showRole ? (
+                        <h1 className="text-3xl text-white font-western1">
+                            Your role in the game is: {game.role ? game.role : "Err: No Role Found"}
+                        </h1>
+                    ) : (
+                        <h1
+                            className={`text-3xl text-white font-western1 transition-opacity duration-1000 ${isFading ? 'opacity-100' : 'opacity-0'}`}
+                        >
+                            {textSeries[currentTextIndex]}
+                        </h1>
+                    )}
                 </div>
             </div>
         </>
-    )
+    );
 }
