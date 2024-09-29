@@ -10,7 +10,7 @@ export default function Status(){
     var playerRole = '';
 
     // TODO: make it so that if you are host (by checking game.host), you can start the game (emit 'next_game_state' with the next game state)
-
+    // maybe move this to gameState
     Socket.emit('lobby_players', { lobby_code: game.lobbyCode }); // TODO: I probably am going about this wrong
     useEffect(() => {
         Socket.on('lobby_players', (data) => {
@@ -21,9 +21,9 @@ export default function Status(){
     });
 
     return(
-        <>
+        <> // NOTE: for now the role is irrelevant. everyone enters a prompt and sees an image. I just need this to work
             <div>// TODO: display text after text fading in and out to describe the story up to this point, then display role, then automatically advance game state
-                <p>Your role in the game is: {playerRole}</p>
+                <p>Your role in the game is: {playerRole}</p> 
             </div>
         </>
     )
