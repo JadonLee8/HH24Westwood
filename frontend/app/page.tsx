@@ -5,6 +5,8 @@ import ForegroundStatic from "@/components/ForegroundStatic";
 export default function Home() {
     const [isMouseLeft, setIsMouseLeft] = useState(false); // Track mouse movement
     const [isJoinClicked, setIsJoinClicked] = useState(false); // Track whether "Join Game" was clicked
+    const [nickname, setNickname] = useState(""); // State to store nickname
+    const [gameCode, setGameCode] = useState(""); // State to store game code
 
     // Function to play hover sound
     const playSound = () => {
@@ -47,6 +49,21 @@ export default function Home() {
         setIsJoinClicked(true); // Move the original wedge out and bring the new wedge in
     };
 
+    // Handle "Play" button click
+    const handlePlayClick = () => {
+        console.log("Nickname:", nickname);
+        console.log("Game Code:", gameCode);
+        // You can add further actions here, such as starting a game or navigating to a new page.
+    };
+
+    // Handle background click to reset
+    const handleBackgroundClick = () => {
+        if (isJoinClicked) {
+            setIsJoinClicked(false); // Reset the join state
+            setIsMouseLeft(false); // Reset the mouse tracking for the left wedge
+        }
+    };
+
     // Attach mousemove event listener on component mount and clean it up on unmount
     useEffect(() => {
         window.addEventListener('mousemove', handleMouseMove);
@@ -57,7 +74,7 @@ export default function Home() {
     }, [isJoinClicked]);
 
     return (
-        <div className="relative min-h-screen overflow-hidden">
+        <div className="relative min-h-screen overflow-hidden" onClick={handleBackgroundClick}>
             {/* Background image that is always visible */}
             <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -89,26 +106,50 @@ export default function Home() {
                 }}
             ></div>
 
- {/* New Upside-Down Flipped Wedge (appears after "Join Game" click) */}
-<div
-    className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-33.33vw]' : ''}`} 
-    style={{
-        clipPath: 'polygon(100% 100%, 0 100%, 40% 0, 100% 0)', // Flipped both horizontally and vertically
-        backgroundImage: 'url(/pattern.jpg)', // Same pattern for the wedge
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-    }}
-></div>
+            {/* New Upside-Down Flipped Wedge (appears after "Join Game" click) */}
+            <div
+                className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-33.33vw]' : ''}`} 
+                style={{
+                    clipPath: 'polygon(100% 100%, 0 100%, 40% 0, 100% 0)', // Flipped both horizontally and vertically
+                    backgroundImage: 'url(/pattern.jpg)', // Same pattern for the wedge
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
+                {/* Input fields and Play button */}
+                <div className="flex flex-col items-center justify-center h-full space-y-6 p-6" onClick={(e) => e.stopPropagation()}>
+                    <input
+                        type="text"
+                        placeholder="Enter Nickname"
+                        className="p-2 rounded-md text-black w-1/2 ml-20 mt-20" // Shifted right (ml-12) and down (mt-6)
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Enter Game Code"
+                        className="p-2 rounded-md text-black w-1/2 ml-20" // Shifted right (ml-12)
+                        value={gameCode}
+                        onChange={(e) => setGameCode(e.target.value)}
+                    />
+                    <img
+                        src="/playbutton.png" // Path to the play button image
+                        alt="Play Button"
+                        className="w-[25%] ml-20 cursor-pointer hover:opacity-90 active:opacity-60 hover:scale-105 transition duration-200 transform" // Shifted right (ml-12) with hover and click effects
+                        onClick={handlePlayClick} // On click handler for the play button
+                    />
+                </div>
+            </div>
 
-{/* New Upside-Down Parallelogram-Shaped Black Border */}
-<div
-    className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-53.33vw]' : ''}`} 
-    style={{
-        clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)', // Both sides are slanted, forming a parallelogram
-        backgroundColor: 'black', // Solid black color for the slanted edge
-        zIndex: 1, // Ensure the black edge is on top
-    }}
-></div>
+            {/* New Upside-Down Parallelogram-Shaped Black Border */}
+            <div
+                className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-53.33vw]' : ''}`} 
+                style={{
+                    clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)', // Both sides are slanted, forming a parallelogram
+                    backgroundColor: 'black', // Solid black color for the slanted edge
+                    zIndex: 1, // Ensure the black edge is on top
+                }}
+            ></div>
 
             {/* Logo with Pulse Animation */}
             <div
