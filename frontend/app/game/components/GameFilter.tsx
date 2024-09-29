@@ -22,7 +22,7 @@ const GameFilter = () => {
             const len = buffer32.length;
 
             for (let i = 0; i < len; i++) {
-                if (Math.random() < 0.7) {
+                if (Math.random() < 0.5) {
                     buffer32[i] = 0xff000000;
                 }
             }
@@ -31,7 +31,7 @@ const GameFilter = () => {
         };
 
         const paintNoise = () => {
-            if (frame === 19) {
+            if (frame === 9) {
                 frame = 0;
             } else {
                 frame++;
@@ -56,11 +56,11 @@ const GameFilter = () => {
             canvas.height = wHeight;
 
             noiseData = [];
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 10; i++) {
                 createNoise();
             }
 
-            loop();
+            // loop();
         };
 
         const handleResize = () => {
