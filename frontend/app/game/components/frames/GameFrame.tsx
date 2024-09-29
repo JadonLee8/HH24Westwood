@@ -19,11 +19,11 @@ export default function GameFrame() {
 
     return (
         // TODO: switch from criminal to outlaw terminology
-        game.role === "outlaw" ? (<CriminalFrame game={game} />) : (<InnocentFrame />)
+        game.role === "outlaw" ? (<OutlawFrame game={game} />) : (<InnocentFrame />)
     );
 }
 
-function CriminalFrame({ game }) {
+function OutlawFrame({ game }) {
     return (
         <div className="flex items-center justify-center min-h-screen shadow-2xl">
             <div className="bg-amber-900 p-5 m-5 rounded-md">
