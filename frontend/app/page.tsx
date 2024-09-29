@@ -89,28 +89,26 @@ export default function Home() {
                 }}
             ></div>
 
-            {/* New Upside-Down Wedge (appears after "Join Game" click) */}
-            <div
-                className={`absolute w-1/3 h-full right-[-100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-100vw]' : 'translate-x-[100vw]'}`} 
-                style={{
-                    clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0 100%)', // Correct wedge shape, no mirroring
-                    backgroundImage: 'url(/pattern.jpg)', // Same pattern for the wedge
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transform: 'rotate(180deg)', // Flip the wedge upside-down
-                }}
-            ></div>
+ {/* New Upside-Down Flipped Wedge (appears after "Join Game" click) */}
+<div
+    className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-33.33vw]' : ''}`} 
+    style={{
+        clipPath: 'polygon(100% 100%, 0 100%, 40% 0, 100% 0)', // Flipped both horizontally and vertically
+        backgroundImage: 'url(/pattern.jpg)', // Same pattern for the wedge
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    }}
+></div>
 
-             {/* New Upside-Down Parallelogram-Shaped Black Border */}
-             <div
-                className={`absolute w-1/3 h-full right-[-100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-100vw]' : 'translate-x-[100vw]'}`} 
-                style={{
-                    clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)', // Both sides are slanted, forming a parallelogram
-                    backgroundColor: 'black', // Solid black color for the slanted edge
-                    zIndex: 1, // Ensure the black edge is on top
-                    transform: 'rotate(180deg)' // Flip the wedge upside-down
-                }}
-            ></div>
+{/* New Upside-Down Parallelogram-Shaped Black Border */}
+<div
+    className={`absolute w-1/3 h-full left-[100vw] transform transition-transform duration-1000 ${isJoinClicked ? 'translate-x-[-53.33vw]' : ''}`} 
+    style={{
+        clipPath: 'polygon(98% 0, 100% 0, 62% 100%, 60% 100%)', // Both sides are slanted, forming a parallelogram
+        backgroundColor: 'black', // Solid black color for the slanted edge
+        zIndex: 1, // Ensure the black edge is on top
+    }}
+></div>
 
             {/* Logo with Pulse Animation */}
             <div
