@@ -1,12 +1,30 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import ForegroundStatic from "@/components/ForegroundStatic";
+import Socket from '@/components/network/Socket';
 
 export default function Home() {
     const [isJoinClicked, setIsJoinClicked] = useState(false); // Track whether "Join Game" was clicked
-    const [nickname, setNickname] = useState(""); // State to store nickname
-    const [gameCode, setGameCode] = useState(""); // State to store game code
     const [resetWedges, setResetWedges] = useState(false); // Reset wedges after retracting
+    const [joinCode, setJoinCode] = useState('');
+    const [lobby, setLobby] = useState(null);
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+        Socket.on('lobby_joined', (data) => {
+            setLobby(data);
+            console.log('Lobby joined:', data);
+        });
+
+        Socket.on('error', (data) => {
+            console.error(data)
+        });
+
+        return () => {
+            Socket.off('lobby_joined');
+            Socket.off('error');
+        }
+    }, [])
 
     // Function to play hover sound
     const playSound = () => {
@@ -37,8 +55,10 @@ export default function Home() {
 
     // Handle "Play" button click
     const handlePlayClick = () => {
-        console.log("Nickname:", nickname);
-        console.log("Game Code:", gameCode);
+        console.log("Nickname:", username);
+        console.log("Game Code:", joinCode);
+        console.log("Attempting to join lobby", joinCode);
+        Socket.emit('join_lobby', { lobby_code: joinCode });
     };
 
     // Handle background click to reset
@@ -112,17 +132,17 @@ export default function Home() {
                         type="text"
                         placeholder="Enter Nickname"
                         className="p-2 rounded-md text-black w-1/2"
-                        value={nickname}
+                        value={username}
                         maxLength={15} // Max 15 characters for nickname
-                        onChange={(e) => setNickname(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                     <input
                         type="text"
                         placeholder="Enter Game Code"
                         className="p-2 rounded-md text-black w-1/2"
-                        value={gameCode}
+                        value={joinCode}
                         maxLength={6} // Max 6 characters for game code
-                        onChange={(e) => setGameCode(e.target.value)}
+                        onChange={(e) => setJoinCode(e.target.value)}
                     />
                     <img
                         src="/playbutton.png"

@@ -47,9 +47,10 @@ async def create_lobby(sid, data):
 @sio.event
 async def join_lobby(sid, data):
     lobby_code = data['lobby_code']
-    if l_manager.join_lobby(sid, lobby_code):
+    if l_manager.join_lobby(data['username'], lobby_code):
         await sio.enter_room(sid, lobby_code)
         await sio.emit('lobby_joined', {'lobby_code': lobby_code}, room=lobby_code)
+        await sio.emit('lobby_players', { 'lobby_code': lobby_code }, room=lobby_code)
     else:
         await sio.emit('error', {'message': 'Cannot join lobby'}, room=sid)
 
