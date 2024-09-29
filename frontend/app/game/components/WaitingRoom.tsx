@@ -1,21 +1,25 @@
 'use client'
 import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
-import React, { use, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function WaitingRoom() {
     const game = useGameContext();
     const code = game.lobbyCode ?? "ABCDEF";
     const [players, setPlayers] = useState<string[]>([]);
 
-    Socket.on('lobby_players', (data) => { // TODO: maybe change to the join emit
-        console.log('Lobby players:', data.players);
-        const playerList = data.players;
-        setPlayers(playerList);
-    });
+    useEffect(() => {
+        Socket.on('lobby_players', (data) => { // TODO: maybe change to the join emit
+            console.log('Lobby players:', data.players);
+            const playerList = data.players;
+            setPlayers(playerList);
+        });
+        return () => {
+            Socket.off('lobby_players');
+        }
+    }, [])
 
-
-    return(
+    return (
         <>
             <div className="flex justify-center items-center w-full h-screen mt-10 flex-col">
                 <div className='h-full'>
@@ -31,7 +35,7 @@ export default function WaitingRoom() {
                         <h2 className='font-western text-7xl text-orange-100'>
                             Players:
                         </h2>
-                        <ul className='text-rose-100 text-9xl font-western1'>
+                        <ul className='text-rose-100 text-7xl font-western1'>
                             {players.map((player, index) => (
                                 <li key={index}>{player}</li>
                             ))}

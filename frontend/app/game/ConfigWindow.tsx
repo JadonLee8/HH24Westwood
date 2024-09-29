@@ -2,10 +2,12 @@
 import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ConfigWindow() {
     const game = useGameContext();
     const [players, setPlayers] = useState<string[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         Socket.on('lobby_created', (data) => {
@@ -35,6 +37,10 @@ export default function ConfigWindow() {
         });
 
         Socket.emit('lobby_players', { lobby_code: game.lobbyCode });
+
+        if (!game.lobbyCode) {
+            router.push('/');
+        }
 
         return () => {
             console.log("Dismounting...")
