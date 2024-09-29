@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Socket from "@/components/network/Socket";
 import { useGameContext } from "@/components/context/GameContext";
-import { Slider } from "@mui/material";
 
 export default function SixthFrame() {
     const game = useGameContext();
