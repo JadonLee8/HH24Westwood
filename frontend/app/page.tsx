@@ -74,12 +74,13 @@ export default function Home() {
     return (
         <div className="relative min-h-screen overflow-hidden" onClick={handleBackgroundClick}>
             {/* Background image that is always visible */}
-            <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                    backgroundImage: 'url(background.jpeg)'
-                }}
-            ></div>
+            <video
+            className="absolute inset-0 w-full h-full object-cover "
+            src="bg.mp4"
+            autoPlay
+            loop
+            muted
+        ></video>
 
             <ForegroundStatic /> {/* Add the static effect here */}
 

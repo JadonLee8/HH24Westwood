@@ -8,6 +8,8 @@ export default function ConfigWindow() {
     const [players, setPlayers] = useState<string[]>([]);
 
     useEffect(() => {
+        setGameState(0);
+
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             setLobbyCode(data.lobby_code);
@@ -34,8 +36,6 @@ export default function ConfigWindow() {
             });
         });
 
-        Socket.emit('create_lobby');
-
         return () => {
             Socket.off('lobby_created');
             Socket.off('lobby_joined');
@@ -50,7 +50,7 @@ export default function ConfigWindow() {
 
     return (
         <>
-            <div className="p-5 m-4 bg-slate-600 inline-block rounded-md">
+            <div className="p-5 m-4 bg-slate-600 absolute rounded-md">
                 <p>Hosted Lobby: {currentLobbyCode ?? "None"}</p>
                 <p>Host: {host ? 'Yes' : 'No'}</p>
                 <p>Game State: {gameState}</p>

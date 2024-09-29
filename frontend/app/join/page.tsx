@@ -25,10 +25,8 @@ export default function Join() {
 
 
     const handleJoinLobby = () => {
-        if (joinCode.trim() && username.trim()) { // check this if statement. I'm feeling ... iffy ... about it. HAHAHAHA
-            console.log("Attempting to join lobby", joinCode);
-            Socket.emit('join_lobby', { username: username, lobby_code: joinCode });
-        }
+        console.log("Attempting to join lobby", joinCode);
+        Socket.emit('join_lobby', { lobby_code: joinCode });
     };
 
     return (
