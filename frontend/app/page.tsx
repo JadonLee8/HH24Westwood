@@ -5,6 +5,7 @@ import JoinForm from './components/JoinForm';
 import Link from 'next/link';
 import { useGameContext } from '@/components/context/GameContext';
 import Socket from '@/components/network/Socket';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const [isJoinClicked, setIsJoinClicked] = useState(false);
@@ -13,11 +14,13 @@ export default function Home() {
     const [backgroundVideo, setBackgroundVideo] = useState('bg.mp4');
     const game = useGameContext();
     const [username, setUsername] = useState<string>(''); 
+    const router = useRouter();
 
     useEffect(() => {
         Socket.on('lobby_created', (data) => {
             console.log('Lobby created:', data);
             game.setLobbyCode(data.lobby_code);
+            router.push('/game');
         });
 
         return () => {
@@ -170,8 +173,7 @@ export default function Home() {
                             maxLength={15} 
                             onClick={preventWedgeReset} // Prevent background click
                         />
-                        <Link href="/game">
-                            <img
+                        <img
                                 src="/startbutton.png" 
                                 alt="Start Lobby"
                                 className="start-lobby-button"
@@ -182,7 +184,6 @@ export default function Home() {
                                     game.setHost(true);
                                 }}
                             />
-                        </Link>
                     </div>
                 </div>
             </div>
