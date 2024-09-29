@@ -8,6 +8,7 @@ export default function GameFrame() {
     const game = useGameContext();
 
     return (
+        // TODO: if your not the criminal just say you are asleep
         <div className="flex items-center justify-center min-h-screen shadow-2xl">
             <div className="bg-amber-900 p-5 m-5 rounded-md">
                 <h1 className="text-5xl text-white font-western">Enter your crime:</h1>
