@@ -89,7 +89,7 @@ async def next_game_state(sid, data):
     if l_manager.has_lobby(lobby_code):
         print("Going to next game state")
         l_manager.next_game_state(lobby_code)
-        await sio.emit('game_state', {'game_state': l_manager.lobbies[lobby_code].game_state}, room=lobby_code)
+        await sio.emit('next_game_state', {'game_state': l_manager.lobbies[lobby_code].game_state}, room=lobby_code)
     else:
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 

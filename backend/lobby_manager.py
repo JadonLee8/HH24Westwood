@@ -67,6 +67,7 @@ class LobbyManager:
 
         # Create empty lobby
         self.lobbies[lobby_code] = Lobby(lobby_code)
+        self.lobbies[lobby_code].game_state = 0
         return lobby_code
 
     # Clear all users from lobby
