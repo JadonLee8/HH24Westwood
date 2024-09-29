@@ -41,13 +41,25 @@ export default function Status() {
         }
     }, [currentTextIndex]);
 
+    const roleName = () => {
+        if (game.role === "witness") {
+            return "Witness";
+        } else if (game.role === "outlaw") {
+            return "Outlaw";
+        } else if (game.role === "citizen") {
+            return "Forensic Artist";
+        } else {
+            return "Unknown";
+        }
+    }
+
     return (
         <>
             <div className="flex items-center justify-center min-h-screen shadow-2xl">
                 <div className="bg-amber-900 p-5 m-5 rounded-md">
                     {showRole ? (
                         <h1 className="text-3xl text-white font-western1">
-                            Your role in the game is: {game.role ? game.role : "Err: No Role Found"}
+                            Your role in the game is: {roleName()}
                         </h1>
                     ) : (
                         <h1

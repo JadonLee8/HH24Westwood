@@ -57,7 +57,7 @@ export default function ConfigWindow() {
 
     return (
         <>
-            <div className="p-5 m-4 bg-slate-600 absolute rounded-md">
+            {/* <div className="p-5 m-4 bg-slate-600 absolute rounded-md">
                 <p>Hosted Lobby: {game.lobbyCode ?? "None"}</p>
                 <p>Host: {game.host ? 'Yes' : 'No'}</p>
                 <p>Game State: {game.gameState}</p>
@@ -71,7 +71,7 @@ export default function ConfigWindow() {
                 <button onClick={() => Socket.emit('next_game_state', { 'lobby_code': game.lobbyCode })} className="border border-black rounded px-4 py-2 m-2">
                     Next Game State
                 </button>
-            </div>
+            </div> */}
         </>
     );
 }

@@ -4,6 +4,7 @@ import { useGameContext } from '@/components/context/GameContext';
 import Socket from "@/components/network/Socket";
 
 export default function ThirdFrame() {
+    const game = useGameContext();
     const [showImage, setShowImage] = useState(true); // State to control image visibility
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export default function ThirdFrame() {
         });
     });
 
-    const game = useGameContext();
+   
 
     const generateImage = async (prompt: string) => {
         console.log("Generating image with prompt 1:", prompt);
@@ -61,7 +62,7 @@ export default function ThirdFrame() {
     console.log(game.role);
     return (
         <>
-            {game.role === 'witness' ? witnessFrame({ game, showImage }) : otherFrame()}
+            {game.role === 'witness' ? witnessFrame({ game, showImage }) : otherFrame({ game })}
         </>
     );
 }
@@ -119,12 +120,12 @@ function witnessFrame({ game, showImage }) {
     );
 }
 
-function otherFrame() {
+function otherFrame( { game}) {
     return (
         <>
             <div className="flex items-center justify-center min-h-screen">
                 <div className="bg-amber-800 p-5 rounded-lg">
-                    <h1 className="text-white text-4xl font-western">You here a disturbance in the night...</h1>
+                    <h1 className="text-white text-4xl font-western">{game.role === "outlaw" ? "Committing the crime..." :"You hear a disturbance in the night..."}</h1>
                 </div>
             </div>
         </>

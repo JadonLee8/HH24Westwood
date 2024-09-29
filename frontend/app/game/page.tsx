@@ -46,12 +46,10 @@ export default function Game() {
             case 3:
                 return <ThirdFrame />;
             case 4:
-                return <FourthFrame />;
-            case 5:
                 return <FifthFrame />;
-            case 6:
+            case 5:
                 return <SixthFrame />;
-            case 7:
+            case 6:
                 return <SeventhFrame />;
             default:
                 return <div>No component selected</div>;
