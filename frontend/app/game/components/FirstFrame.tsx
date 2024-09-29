@@ -22,7 +22,7 @@ export default function Status(){
 
     return(
         <>
-            <div>
+            <div>// TODO: display text after text fading in and out to describe the story up to this point, then display role, then automatically advance game state
                 <p>Your role in the game is: {playerRole}</p>
             </div>
         </>
