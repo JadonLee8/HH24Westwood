@@ -139,6 +139,27 @@ async def next_game_state(sid, data):
     else:
         await sio.emit('error', {'message': 'Lobby not found'}, room=sid)
 
+@sio.event
+async def set_prompt(sid, data):
+    lobby_code = data['lobby_code']
+    prompt = data['prompt']
+    l_manager.set_prompt(lobby_code, prompt)
+    await sio.emit('prompt_set', {'prompt': prompt}, room=lobby_code)
+
+@sio.event
+async def set_image_url(sid, data):
+    lobby_code = data['lobby_code']
+    prompt = data['prompt']
+    l_manager.set_image_url(lobby_code, prompt)
+    await sio.emit('image_url_set', {'prompt': prompt}, room=lobby_code)
+
+@sio.event
+async def set_witness_account(sid, data):
+    lobby_code = data['lobby_code']
+    witness_account = data['witness_account']
+    l_manager.set_witness_account(lobby_code, witness_account)
+    await sio.emit('witness_account_set', {'witness_account': witness_account}, room=lobby_code)
+
 # Start the server
 if __name__ == '__main__':
     web.run_app(app, host='localhost', port=8765)

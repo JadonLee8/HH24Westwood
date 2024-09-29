@@ -23,6 +23,9 @@ class Lobby:
         self.images = {}
         self.image_ratings = {}
         self.img_r_amt = 0
+        self.image_url = ""
+        self.prompt = ""
+        self.witness_account = ""
 
     def start_lobby(self):
         self.game_state = 1
@@ -54,12 +57,12 @@ class Lobby:
 
     def remove_user(self, User):
         self.users.remove(User)
-    
+
     def add_image(self, sid, image):
         self.images[sid] = image
         return len(self.images) == len(self.users) - 2
-            
-        
+
+
 
 # TODO: replace username with sid for the identifier. Consider rest of code tho. Might be easier to just prevent duplicate usernames
 # TODO: prevent duplicate usernames
@@ -160,6 +163,18 @@ class LobbyManager:
             print({user.username: user.role.value for user in self.lobbies[code].users})
             return {user.username: user.role.value for user in self.lobbies[code].users}
         return {}
+
+    def set_image_url(self, code, prompt):
+        if code in self.lobbies:
+            self.lobbies[code].prompt = prompt
+
+    def set_prompt(self, code, prompt):
+        if code in self.lobbies:
+            self.lobbies[code].prompt = prompt
+
+    def set_witness_account(self, code, witness_account):
+        if code in self.lobbies:
+            self.lobbies[code].witness_account = witness_account
 
     def has_lobby(self, code):
         return code in self.lobbies
