@@ -70,14 +70,18 @@ export default function ThirdFrame() {
 function witnessFrame({ game, showImage }) {
     return (
         <>
-            {showImage ? (
+            {true ? (
                 // Render the generated image if showImage is true
                 game.crimeImageURL ? (
+                    <div className="flex items-center justify-center min-h-screen">
                     <img
                         src={game.crimeImageURL}
                         alt="Generated image"
-                        className="w-70 h-70 rounded-lg shadow-lg" // Adjust width and height as needed
+                        className="w-70 h-70 rounded-lg shadow-lg"
+                        width="70"
+                        height="70" // Adjust width and height as needed
                     />
+                </div>
                 ) : (
                     // If showImage is true but no image URL, show loading message
                     <div className="flex items-center justify-center min-h-screen">
