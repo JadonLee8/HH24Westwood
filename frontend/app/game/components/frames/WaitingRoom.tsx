@@ -59,7 +59,7 @@ export default function WaitingRoom() {
                         }}
                         className={`px-6 py-3  text-white text-2xl rounded ${ players.length > 3 ? "bg-blue-500 hover:bg-blue-600": "bg-gray-400"}`}
                     >
-                        Start Game
+                    Start Game
                     </button>
                 </div>
             )}
